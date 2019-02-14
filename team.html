@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <link rel="icon" href="images/favicon.ico">
+    <script src="js/limit.js"></script>
+    <link rel="stylesheet" href="css/all.css">
+    <link rel="stylesheet" href="css/polyfill.object-fit.min.css">
+</head>
+<body>
+<div class="pulice" v-cloak>
+    <div class="header">
+        <div class="headerCenter">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png">
+                </a>
+            </div>
+            <div class="nav_right">
+                <div class="nav" v-if="!userInfor || (userInfor && userInfor.role==0)">
+                    <a href="index.html" class="activeStyle">
+                        <span>活动</span>
+                    </a>
+                    <a href="jinxing.html">
+                        <span>进行中</span>
+                    </a>
+                    <a href="lishi.html">
+                        <span>历史</span>
+                    </a>
+                    <a :href="api+'/static/good/list.html'">
+                        <span>游戏商城</span>
+                    </a>
+                    <a href="upload.html">
+                        <span>发起活动</span>
+                    </a>
+                    <a target="_blank" href="http://jy.babagame.vip/">
+                        <span>[奖励与规则]</span>
+                    </a>
+                </div>
+                <div class="nav" v-if="userInfor && userInfor.role==1">
+                    <a href="check.html" class="activeStyle">
+                        <img src="images/1.png" alt="">
+                        <span>活动审核</span>
+                    </a>
+                    <a href="userlist.html">
+                        <img src="images/2.png" alt="">
+                        <span>用户管理</span>
+                    </a>
+                </div>
+                <div class="fixedRight">
+                    <a href="login.html" v-if="!userInfor">
+                        <img class="img1" src="images/rentou.png" alt="">
+                        <span>登录</span>
+                    </a>
+                    <a href="center.html" v-else>
+                        <p>
+                            <span>{{userInfor.nickName}}</span>
+                            <i @click.stop.prevent="logOut">[退出]</i>
+                        </p>
+                        <img class="img2" :src="userInfor.avatar||'images/renxing.png'" alt="">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="team" v-cloak>
+        <div class="shenhe2">
+            <ul class="shenheList2">
+                <li>
+                    <!--去对决页面-->
+                    <div class="sendBtn"
+                         v-if="!status && actGameModel!=6 && actGameModel!=7"
+                         @click="togoDuijue">完成
+                    </div>
+                    <!--上报鸽子玩家-->
+                    <!-- <div class="sendBtn" @click="setNoOk" v-if="fenzuList.length>0">上报</div> -->
+
+                    <!--  娱乐 乱斗 确认冠军-->
+                    <div class="sendBtn"
+                         v-if="!status && (actGameModel==6 || actGameModel==7)"
+                         @click="querenGuanjun">确认冠军
+                    </div>
+
+                    <div class="top">
+                        <img :src="pageObj.avatar" alt="">
+                        <div class="infor">
+                            <p>
+                                <span>活动名称:</span>
+                                <i>{{pageObj.actName}}</i>
+                            </p>
+                            <p>
+                                <span>游戏:</span>
+                                <i>{{pageObj.actGameName}}</i>
+                            </p>
+                            <p>
+                                <span>模式:</span>
+                                <i>{{pageObj.actGameModel}}</i>
+                            </p>
+                            <p>
+                                <span>活动时间:</span>
+                                <i>{{pageObj.actTime}}</i>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="guize">
+                        <p>
+                            <b>活动规则</b>
+                            <!-- <span>{{pageObj.actRule}}</span> -->
+
+                            <span class="append" v-html="pageObj.actRule"></span>
+                        </p>
+                        <p>
+                            <b>请求赞助</b>
+                            <span>{{pageObj.sponsor}}</span>
+                        </p>
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+        <div class="fenzuSelect">
+
+            <div class="userObj" v-if="user">
+                <img :src="user.avatar" alt="">
+                <span>{{user.nickName}}</span>
+                <span>冠军</span>
+            </div>
+
+            <!--队伍分配-->
+            <div class="fenpei" v-if="!status && (actGameModel!=6 && actGameModel!=7)">
+
+                <div class="team" v-for="(item,index) in teamList" v-if="teamList.length>0">
+                    <b>{{item.groupName}}队</b>
+                    <div class="teamList">
+                        <a href="javascript:;" v-for="(item1,index1) in item.users">
+                            <img :src="item1.avatar" alt="">
+                            <i>
+                                <span>{{item1.qq}}</span>
+                                <span>{{item1.nickName}}</span>
+                            </i>
+                        </a>
+                    </div>
+                </div>
+
+                <!--随机分组和添加分组-->
+                <div class="group" v-if="!status && actGameModel!=6 && actGameModel!=7">
+                    <!--v-if="teamList.length<=0" -->
+                    <a @click="radomTeamFn" v-if="fenzuList.length>0 &&teamList.length<=0" class="a1"
+                       href="javascript:;">随机分组</a>
+                    <a v-if="fenzuList.length>0" @click="addTeam" class="a2" href="javascript:;">添加分组</a>
+                </div>
+            </div>
+
+
+        </div>
+        <!--模式未分组-->
+        <div class="fenzuList" v-if="!status && actGameModel!=6 && actGameModel!=7">
+            <a @click="addTeamRen(item,index)" :class="{selected:item.selected}" href="javascript:;"
+               v-for="(item,index) in fenzuList">
+                <img :src="item.avatar" alt="">
+                <i>
+                    <span>{{item.qq}}</span>
+                    <span>{{item.nickName}}</span>
+                </i>
+            </a>
+        </div>
+
+        <!--乱斗未分组-->
+        <div class="fenzuList" v-if="!status && (actGameModel==6 || actGameModel==7)">
+            <a @click="onlyRen(item,index)" :class="{selected:currentIndex==index}" href="javascript:;"
+               v-for="(item,index) in fenzuList">
+                <img :src="item.avatar" alt="">
+                <i>
+                    <span>{{item.qq}}</span>
+                    <span>{{item.nickName}}</span>
+                </i>
+            </a>
+        </div>
+
+        <!--报名未分组 只看能报名的不可操作-->
+        <div class="fenzuList" v-if="status">
+            <a href="javascript:;" v-for="(item,index) in fenzuList">
+                <img :src="item.avatar" alt="">
+                <i>
+                    <span>{{item.qq}}</span>
+                    <span>{{item.nickName}}</span>
+                </i>
+            </a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+<script src="js/jquery-1.10.1.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/vue.js"></script>
+<script src="js/polyfill.object-fit.min.js"></script>
+<script>
+    new Vue({
+        el: '.pulice',
+        data: {
+            api: api,
+            userInfor: userInfor,
+            fenzuList: [], //未分组人员列表
+            escapeUsersList: [], //鸽子玩家人员列表
+            teamList: [], //选中的组的人数
+            // addFlag:false, // 是否可以添加分组
+            addTeamRenNum: [], //添加的分组人员
+            actId: getSearchString('id')||0,
+            pageObj: {},
+            uidList: [], //添加分组选中的人员id集合
+            actGameModel: 1, //模式
+            userId: '',
+            currentIndex: -1,
+            user: '',
+            status: getSearchString('status') || ''
+        },
+        methods: {
+            logOut(){
+                $.ajax({
+                    url: api + '/baba/act/logout',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        window.sessionStorage.removeItem('userInfor')
+                        window.location.reload()
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            // 请求数据
+            getData(){
+                var that = this
+                $.ajax({
+                    url: api + '/baba/act/getWillGroupActivityDetailById',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: {
+                        actId: that.actId
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if (res.code == 'LPB0001') {
+                            that.pageObj = res.data
+                            that.teamList = res.data.glist //已分组
+                            that.fenzuList = res.data.unGroupUsers //未分组
+                            that.escapeUsersList = res.data.escapeUsersList //鸽子玩家
+                            that.actGameModel = res.data.gameModelType //游戏模式
+                            that.user = res.data.winnerUser
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+
+            // 选中添加的人进行分组
+            addTeamRen(item, index){
+                // 不能一边设置状态 一边添加到数组 必须分开写
+                if (!item.selected) {
+                    this.$set(item, 'selected', true)
+                } else {
+                    this.$set(item, 'selected', false)
+                }
+                if (item.selected) {
+                    if (this.addTeamRenNum.length >= this.actGameModel) {
+                        jalert('不能再选择更多人了')
+                        this.$set(item, 'selected', false)
+                        return false
+                    } else {
+                        this.addTeamRenNum.push(item)
+                    }
+                } else {
+                    this.addTeamRenNum.splice(index, 1)
+                }
+            },
+
+            // 添加分组
+            addTeam(){
+                if (this.fenzuList.length <= 0) {
+                    jalert('没有人员可以进行分组了')
+                    return false
+                } else if (this.addTeamRenNum.length > this.actGameModel) {
+                    jalert('不能再选择更多人了')
+                } else if (this.addTeamRenNum.length <= 0) {
+                    jalert('请选择人员进行分组')
+                } else {
+                    console.log(this.addTeamRenNum)
+                    this.addTeamRenNum.forEach((item, index) => {
+                        this.uidList.push(item.uid)
+                    })
+                    this.addTeamFn()
+                }
+            },
+            // 添加分组接口
+            addTeamFn(){
+                var that = this;
+                var obj = {
+                    actId: that.actId,
+                    users: that.uidList
+                }
+                $.ajax({
+                    url: api + '/baba/act/groupUsersWithGroup',
+                    type: 'post',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: JSON.stringify(obj),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if (res.code == 'LPB0001') {
+                            that.uidList = []
+                            that.addTeamRenNum = []
+                            that.getData()
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+
+            // 随机给用户分组
+            radomTeamFn(){
+                var that = this;
+                $.ajax({
+                    url: api + '/baba/act/randomGroupUsersByActId',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: {
+                        actId: that.actId,
+                        userCount: that.actGameModel
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if (res.code == 'LPB0001') {
+                            that.getData()
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+
+            // 去对决页面
+            togoDuijue(){
+                if (this.fenzuList.length <= 0) {
+                    window.location.href = "referee.html?id="+this.actId;
+                    this.wancheng()
+                } else {
+                    jalert('您还有未分组的人员，请先进行分组')
+                }
+            },
+            // 完成分组接口
+            wancheng(){
+                var that = this;
+                $.ajax({
+                    url: api + '/baba/act/setActGroupOver',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: {
+                        actId: that.actId
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if (res.code == 'LPB0001') {
+                            that.getData()
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+
+            // 只有一个人
+            onlyRen(item, index){
+                this.userId = item.uid
+                this.currentIndex = index
+            },
+            // 确认冠军
+            querenGuanjun(){
+                var that = this;
+                $.ajax({
+                    url: api + '/baba/act/setActUserWinner',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: {
+                        actId: that.actId,
+                        userId: that.userId
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if (res.code == 'LPB0001') {
+                            that.getData()
+                            that.currentIndex = -1
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            }
+        },
+        mounted(){
+            this.getData()
+            objectFit.polyfill({
+                selector: 'img',
+                fittype: 'cover'
+            });
+        }
+    })
+</script>

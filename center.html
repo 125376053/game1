@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <link rel="icon" href="images/favicon.ico">
+    <script src="js/limit.js"></script>
+    <link rel="stylesheet" href="css/all.css">
+    <link rel="stylesheet" href="css/polyfill.object-fit.min.css">
+</head>
+<body>
+<div class="pulice" v-cloak>
+    <div class="header">
+        <div class="headerCenter">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png">
+                </a>
+            </div>
+            <div class="nav_right">
+                <div class="nav" v-if="!userInfor || (userInfor && userInfor.role==0)">
+                    <a href="index.html" class="activeStyle">
+                        <span>活动</span>
+                    </a>
+                    <a href="jinxing.html">
+                        <span>进行中</span>
+                    </a>
+                    <a href="lishi.html">
+                        <span>历史</span>
+                    </a>
+                    <a :href="api+'/static/good/list.html'">
+                        <span>游戏商城</span>
+                    </a>
+                    <a href="upload.html">
+                        <span>发起活动</span>
+                    </a>
+                    <a target="_blank" href="http://jy.babagame.vip/">
+                        <span>[奖励与规则]</span>
+                    </a>
+                </div>
+                <div class="nav" v-if="userInfor && userInfor.role==1">
+                    <a href="check.html" class="activeStyle">
+                        <img src="images/1.png" alt="">
+                        <span>活动审核</span>
+                    </a>
+                    <a href="userlist.html">
+                        <img src="images/2.png" alt="">
+                        <span>用户管理</span>
+                    </a>
+                </div>
+                <div class="fixedRight">
+                    <a href="login.html" v-if="!userInfor">
+                        <img class="img1" src="images/rentou.png" alt="">
+                        <span>登录</span>
+                    </a>
+                    <a href="center.html" v-else>
+                        <p>
+                            <span>{{userInfor.nickName}}</span>
+                            <i @click.stop.prevent="logOut">[退出]</i>
+                        </p>
+                        <img class="img2" :src="userInfor.avatar||'images/renxing.png'" alt="">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mySend" v-cloak>
+        <div class="tabs_center">
+            <a href="javascript:;" @click="tabsHandler(2)" :class="{activeStyle:activeIndex===2}">
+                <span>我参与的</span>
+            </a>
+            <a href="javascript:;" @click="tabsHandler(1)" :class="{activeStyle:activeIndex===1}">
+                <span>我发起的</span>
+            </a>
+            <div v-if="activeIndex===1" class="sendBtn">
+                <a href="upload.html"
+                   style="display: block;width: 85px;height: 30px; line-height: 30px;color:#fff;font-size: 12px; margin: 0; padding: 0;">发起新活动</a>
+            </div>
+        </div>
+        <div v-if="activeIndex===2" class="shenhe">
+            <ul class="shenheList">
+                <li v-for="(item,index) in data">
+                    <div class="type_icon" :class="typeClass[item.actStatus]">
+                        <p v-if="item.actStatus==4">{{si(item.actStatus)}}</p>
+                    </div>
+                    <div class="top">
+                        <div class="topImg"><img :src="item.actCover" alt=""></div>
+                        <div class="infor">
+                            <p>
+                                <span>活动名称:</span>
+                                <i>{{item.actName}}</i>
+                            </p>
+                            <p>
+                                <span>游戏:</span>
+                                <i>{{item.actGameName}}</i>
+                            </p>
+                            <p>
+                                <span>模式:</span>
+                                <i>{{item.actGameModel}}</i>
+                            </p>
+                            <p>
+                                <span>活动时间:</span>
+                                <i>{{item.actTime}}</i>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="guize">
+                        <p>
+                            <b>活动规则</b>
+                            <!-- <span>{{item.actRule}}</span> -->
+                            <span class="append" v-html="item.actRule"></span>
+                        </p>
+                    </div>
+                </li>
+            </ul>
+            <div v-if="data.length==0" style=" text-align: center; line-height: 500px; font-size: 20px;">暂无数据</div>
+        </div>
+        <div v-if="activeIndex===1" class="shenhe">
+            <ul class="shenheList">
+                <li v-for="(item,index) in data">
+                    <div v-if="item.actStatus!==1 || item.actStatus!==3">
+
+                        <!--4567-->
+                        <div class="anniu">
+                            <a href="javascript:;" @click="gotoPage(item,item.actStatus)">
+                                {{status(item.actStatus)}}
+                            </a>
+                        </div>
+
+                        <div class="anniu_yu">
+                            {{status2(item.actStatus)}}
+                        </div>
+                    </div>
+                    <div class="top">
+                        <div class="topImg"><img :src="item.actCover" alt=""></div>
+                        <div class="infor">
+                            <p>
+                                <span>活动名称:</span>
+                                <i>{{item.actName}}</i>
+                            </p>
+                            <p>
+                                <span>游戏:</span>
+                                <i>{{item.actGameName}}</i>
+                            </p>
+                            <p>
+                                <span>模式:</span>
+                                <i>{{item.actGameModel}}</i>
+                            </p>
+                            <p>
+                                <span>活动时间:</span>
+                                <i>{{item.actTime}}</i>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="guize">
+                        <p>
+                            <b>活动规则</b>
+                            <!-- <span>{{item.actRule}}</span> -->
+                            <span class="append" v-html="item.actRule"></span>
+                        </p>
+                        <p>
+                            <b>请求赞助</b>
+                            <span>{{item.sponsor}}</span>
+                        </p>
+                    </div>
+                    <div class="checkStatus">
+                        <p v-if="item.actStatus==1" class="p1">等待审核</p>
+                        <p v-if="item.actStatus!=1 && item.actStatus!=3" class="p2"><span>通过</span>丨加油</p>
+                        <p v-if="item.actStatus==3" class="p3">
+                            <span>驳回</span>丨
+                            <input type="text" placeholder="赞助请求过高，请重新考虑">
+                        </p>
+                    </div>
+                </li>
+            </ul>
+            <div v-if="data.length==0" style=" text-align: center; line-height: 500px; font-size: 20px;">暂无数据</div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
+<script src="js/jquery-1.10.1.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/vue.js"></script>
+<script src="js/polyfill.object-fit.min.js"></script>
+<script>
+    new Vue({
+        el: '.pulice',
+        data: {
+            api: api,
+            userInfor: userInfor,
+            activeIndex: parseInt(getSearchString('activeIndex')) || 1, // 1 发起 2 参与
+            typeClass: {
+                4: 'type1',
+                6: 'type2',
+                5: 'type2',
+                7: 'type3'
+            },
+            data: [],
+        },
+        computed: {
+            si(n){
+                return function (n) {
+                    if (n == 4) {
+                        return '报名中'
+                    } else if (n == 5) {
+                        return '进行中'
+                    } else if (n == 6) {
+                        return '进行中'
+                    } else if (n == 7) {
+                        return '已结束'
+                    } else {
+                        return n
+                    }
+                }
+            },
+            status(n){
+                return function (n) {
+                    if (n == 1) {
+                        return '审核中'
+                    } else if (n == 2) {
+                        return '报名中'
+                    } else if (n == 3) {
+                        return '拒绝'
+                    } else if (n == 4) {
+                        return '报名中'
+                    } else if (n == 5) {
+                        return '分组'
+                    } else if (n == 6) {
+                        return '游戏中'
+                    } else if (n == 7) {
+                        return '已结束'
+                    } else {
+                        return n
+                    }
+                }
+            },
+            status2(n){
+                return function (n) {
+                    if (n == 5) {
+                        return '报名已结束'
+                    }
+                }
+            },
+        },
+        methods: {
+            logOut(){
+                $.ajax({
+                    url: api + '/baba/act/logout',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        window.sessionStorage.removeItem('userInfor')
+                        window.location.reload()
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            gotoPage(item, n){
+                if (n == 4) {
+                    window.location.href = "team.html?id=" + item.actId + '&status=4'
+                } else if (n == 5) {
+                    window.location.href = "team.html?id=" + item.actId
+                } else if (n == 6 || n == 7) {
+                    console.log(item)
+                    if (item.actGameModel == '娱乐' || item.actGameModel == '乱斗') {
+                        window.location.href = "team.html?id=" + item.actId
+                    } else {
+                        window.location.href = "referee.html?id=" + item.actId
+                    }
+                }
+            },
+            tabsHandler(index){
+                this.activeIndex = index
+                this.getData()
+                window.location.href="center.html?activeIndex="+index
+            },
+            getData(){
+                var that = this;
+                $.ajax({
+                    url: api + '/baba/act/getUserCreateOrPartInAct',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: {
+                        type: that.activeIndex
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if (res.code == 'LPB0001') {
+                            that.data = res.data
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            }
+        },
+        mounted(){
+            this.getData()
+            objectFit.polyfill({
+                selector: 'img',
+                fittype: 'cover'
+            });
+        }
+    })
+</script>

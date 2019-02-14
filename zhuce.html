@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <link rel="icon" href="images/favicon.ico">
+    <script src="js/limit.js"></script>
+    <link rel="stylesheet" href="css/all.css">
+    <link rel="stylesheet" href="css/polyfill.object-fit.min.css">
+</head>
+<body>
+<div class="pulice" v-cloak>
+    <div class="header">
+        <div class="headerCenter">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png">
+                </a>
+            </div>
+            <div class="nav_right">
+                <div class="nav" v-if="!userInfor || (userInfor && userInfor.role==0)">
+                    <a href="index.html" class="activeStyle">
+                        <span>活动</span>
+                    </a>
+                    <a href="jinxing.html">
+                        <span>进行中</span>
+                    </a>
+                    <a href="lishi.html">
+                        <span>历史</span>
+                    </a>
+                    <a :href="api+'/static/good/list.html'">
+                        <span>游戏商城</span>
+                    </a>
+                    <a href="upload.html">
+                        <span>发起活动</span>
+                    </a>
+                    <a target="_blank" href="http://jy.babagame.vip/">
+                        <span>[奖励与规则]</span>
+                    </a>
+                </div>
+                <div class="nav" v-if="userInfor && userInfor.role==1">
+                    <a href="check.html" class="activeStyle">
+                        <img src="images/1.png" alt="">
+                        <span>活动审核</span>
+                    </a>
+                    <a href="userlist.html">
+                        <img src="images/2.png" alt="">
+                        <span>用户管理</span>
+                    </a>
+                </div>
+                <div class="fixedRight">
+                    <a href="login.html" v-if="!userInfor">
+                        <img class="img1" src="images/rentou.png" alt="">
+                        <span>登录</span>
+                    </a>
+                    <a href="center.html" v-else>
+                        <p>
+                            <span>{{userInfor.nickName}}</span>
+                            <i @click.stop.prevent="logOut">[退出]</i>
+                        </p>
+                        <img class="img2" :src="userInfor.avatar||'images/renxing.png'" alt="">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="login zhuce" id="register" v-cloak>
+        <div class="loginPadding">
+            <div class="top">
+                <a href="login.html" class="gologin">登录</a>
+                <p>
+                    <a href="zhuce.html" class="gozhuce">注册</a>
+                    <b></b>
+                </p>
+            </div>
+            <div class="login_infor">
+                <p class="p1">
+                    <span></span>
+                    <input class="phone" type="text" placeholder="手机号" v-model="phone">
+                </p>
+                <p class="p2">
+                    <span></span>
+                    <input type="password" placeholder="密码" v-model="password">
+                </p>
+                <p class="p2">
+                    <span></span>
+                    <input type="password" placeholder="确认密码" v-model="password2">
+                </p>
+                <p class="p7">
+                    <span></span>
+                    <input @blur="checkName" type="text" placeholder="用户名" v-model="username">
+                </p>
+                <p class="p2 p8">
+                    <span></span>
+                    <input type="text" placeholder="验证码" v-model="ma" style="width: 250px;">
+                    <!--<b class="ma" style="cursor: pointer;" @click="getYan">获取</b>-->
+                    <button class="getYan_zhuce" @click="getYan">获取验证码</button>
+                </p>
+                <p class="p4" style="margin-top: 25px;" @click="register">注册</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
+<script src="js/jquery-1.10.1.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/vue.js"></script>
+<script src="components/headTopNav2.js"></script>
+<script src="js/polyfill.object-fit.min.js"></script>
+<script>
+    new Vue({
+        el: '.pulice',
+        data: {
+            api: api,
+            userInfor: userInfor,
+            username: '',
+            password: '',
+            password2: '',
+            phone: getCookie('shoujihao') || '',
+            ma: '',
+            hasName: ''
+        },
+        methods: {
+            // 退出登录
+            logOut(){
+                $.ajax({
+                    url: api + '/baba/act/logout',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        window.sessionStorage.removeItem('userInfor')
+                        window.location.reload()
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            register(){
+                var telMoshi = /^1[23456789]\d{9}$/; //手机号验证
+                var passMoshi = /^[0-9a-zA-Z]{6,20}$/g; //密码验证
+                if (this.phone == "" && !telMoshi.test(this.phone)) {
+                    jalert('请输入正确的手机号码');
+                    return false;
+                } else if (this.password == '') {
+                    jalert('密码不能为空');
+                    return false;
+                } else if (!passMoshi.test(this.password)) {
+                    jalert('密码由6-12位数字，大小写字母组成');
+                    return false;
+                } else if (this.password !== this.password2) {
+                    jalert('两次输入密码不一样');
+                    return false;
+                } else if (this.username == "" || this.username.length <= 2 || this.username.length > 8) {
+                    jalert('请输入2-8位用户名')
+                    return false;
+                } else if (/[@#\$%\^&\*]+/g.test(this.username)) {
+                    jalert('用户名不能包含特殊字符')
+                    return false;
+                } else if (!this.hasName) {
+                    jalert('此用户名已存在，请重新输入')
+                    return false;
+                } else if (this.ma == "") {
+                    jalert('请输入验证码');
+                } else {
+                    this.registerFn()
+                }
+            },
+            registerFn(){
+                var that = this;
+                var obj = {
+                    nickName: this.username,
+                    pwd: this.password,
+                    code: this.ma,
+                    phone: this.phone
+                }
+                console.log(JSON.stringify(obj))
+                $.ajax({
+                    url: api + '/baba/act/registUser',
+                    type: 'post',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    contentType: "application/json",
+                    dataType: "json",
+                    data: JSON.stringify(obj),
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if (res.code == 'LPB0001') {
+                            $.Prompt('注册成功');
+                            window.location.href = 'login.html'
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            checkName(){
+                var that = this;
+                $.ajax({
+                    url: api + '/baba/act/hasNickName',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: {
+                        nickName: that.username
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if (res.code == 'LPB0001') {
+                            $.Prompt('用户名可以使用');
+                            that.hasName = true
+                        } else {
+                            that.hasName = false
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            getYan(){
+                setCookie('shoujihao', this.phone || '', 7);//设置手机号cookie 7天
+                var telMoshi = /^1[23456789]\d{9}$/; //手机号验证
+                if (this.phone === '' && !telMoshi.test(this.phone)) {
+                    $.Prompt('请输入正确的手机号码');
+                    return false;
+                } else {
+                    this.checkMa()
+                }
+            },
+            checkMa(){
+                var that = this;
+                $.ajax({
+                    url: api + '/baba/act/sendSms',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: {
+                        phone: that.phone
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if (res.code == 'LPB0001') {
+                            $.Prompt('验证码发送成功');
+                            daojishi()
+                        } else {
+                            $.Prompt(res.message);
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            }
+        },
+        mounted(){
+            if (getCookie('shoujihao') != '') {
+                $('.phone').val(getCookie('shoujihao'))
+            }
+            if (getCookie('captcha') != '') {
+                daojishi()
+            }
+            objectFit.polyfill({
+                selector: 'img',
+                fittype: 'cover'
+            });
+        }
+    })
+</script>

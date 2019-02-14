@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <link rel="icon" href="images/favicon.ico">
+    <script src="js/limit.js"></script>
+    <link href="ued/themes/default/css/umeditor.css" type="text/css" rel="stylesheet">
+    <script src="ued/third-party/jquery.min.js"></script>
+    <script src="ued/umeditor.config.js"></script>
+    <script src="ued/umeditor.min.js"></script>
+    <script src="ued/lang/zh-cn/zh-cn.js"></script>
+    <link rel="stylesheet" href="css/all.css">
+    <link rel="stylesheet" href="css/polyfill.object-fit.min.css">
+</head>
+<body>
+<div class="pulice" v-cloak>
+    <div class="header">
+        <div class="headerCenter">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png">
+                </a>
+            </div>
+            <div class="nav_right">
+                <div class="nav" v-if="!userInfor || (userInfor && userInfor.role==0)">
+                    <a href="index.html" class="activeStyle">
+                        <span>活动</span>
+                    </a>
+                    <a href="jinxing.html">
+                        <span>进行中</span>
+                    </a>
+                    <a href="lishi.html">
+                        <span>历史</span>
+                    </a>
+                    <a :href="api+'/static/good/list.html'">
+                        <span>游戏商城</span>
+                    </a>
+                    <a href="upload.html">
+                        <span>发起活动</span>
+                    </a>
+                    <a target="_blank" href="http://jy.babagame.vip/">
+                        <span>[奖励与规则]</span>
+                    </a>
+                </div>
+                <div class="nav" v-if="userInfor && userInfor.role==1">
+                    <a href="check.html" class="activeStyle">
+                        <img src="images/1.png" alt="">
+                        <span>活动审核</span>
+                    </a>
+                    <a href="userlist.html">
+                        <img src="images/2.png" alt="">
+                        <span>用户管理</span>
+                    </a>
+                </div>
+                <div class="fixedRight">
+                    <a href="login.html" v-if="!userInfor">
+                        <img class="img1" src="images/rentou.png" alt="">
+                        <span>登录</span>
+                    </a>
+                    <a href="center.html" v-else>
+                        <p>
+                            <span>{{userInfor.nickName}}</span>
+                            <i @click.stop.prevent="logOut">[退出]</i>
+                        </p>
+                        <img class="img2" :src="userInfor.avatar||'images/renxing.png'" alt="">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="upload_zhang" v-cloak>
+        <div class="top">
+            <div class="upload_img">
+                <input type="file" accept="image/*" @change="uploadImg" name="Filedata">
+                <div style="width:230px;height:230px;text-align:center;font-size:0;line-height:230px;">
+                    <img id="imgs" style="display:inline-block;vertical-align:middle;" :src="yulan" alt="">
+                </div>
+            </div>
+            <div class="upload_form">
+                <p class="p1">
+                    <span>活动名称:</span>
+                    <input v-model="actName" type="text">
+                </p>
+                <p class="p1">
+                    <span>游戏:</span>
+                    <input v-model="gameName" type="text">
+                </p>
+                <div class="moshi">
+                    <div class="div div1">模式</div>
+                    <div class="div div2">
+                        <p>
+                        <span @click="gameModelType=1" class="radio1"
+                              :class="{radio2:gameModelType==1 || gameModelType==2 || gameModelType==3 || gameModelType==4 || gameModelType==5}"></span>
+                            <b>淘汰赛</b>
+                        </p>
+                        <p>
+                            <span @click="gameModelType=6" class="radio1" :class="{radio2:gameModelType==6}"></span>
+                            <b>乱斗</b>
+                        </p>
+                        <p>
+                            <span @click="gameModelType=7" class="radio1" :class="{radio2:gameModelType==7}"></span>
+                            <b>娱乐</b>
+                        </p>
+                    </div>
+                    <div class="div select">
+                        <p class="xuanze" @click.stop="xiala">
+                            <span>{{seletedVal}}</span>
+                            <i></i>
+                        </p>
+                        <ul class="moshiList" v-if="showOrhide" style="display: block;">
+                            <li @click.stop="changeShow('1v1',1)">1v1</li>
+                            <li @click.stop="changeShow('2v2',2)">2v2</li>
+                            <li @click.stop="changeShow('3v3',3)">3v3</li>
+                            <li @click.stop="changeShow('4v4',4)">4v4</li>
+                            <li @click.stop="changeShow('5v5',5)">5v5</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bottom">
+            <div class="guize">
+                <div class="hasBottom">
+                    <b>活动时间</b>
+                    <input class="laydate-icon" id="demo1" value="">
+                    <span>报名截止时间</span>
+                    <span id="demo2">{{bmTime}}</span>
+                </div>
+                <div class="zhichi">
+                    <b>服务器支持</b>
+                    <a>
+                        <span @click="radioFlag=1" class="radio1" :class="{radio2:radioFlag==1}"></span>
+                        <b>需要</b>
+                    </a>
+                    <a>
+                        <span @click="radioFlag=0" class="radio1" :class="{radio2:radioFlag==0}"></span>
+                        <b>不需要</b>
+                    </a>
+                </div>
+                <div>
+                    <b>活动规则</b>
+
+                    <script type="text/plain" id="myEditor" style="width:400px;height:120px;"><p id="tishi">请描述一下你的活动规则、玩法，以及需要注意的事项，以保证大家都能理解。</p></script>
+                </div>
+                    <div v-if="userInfor.emblemType==2">
+                        <b>请求赞助</b>
+                        <textarea v-model="sponsor" placeholder="示例:"
+                                  style="width: 400px;height: 120px; resize: none;"></textarea>
+                    </div>
+                    <!--1不能申请赞助-->
+                    <div class="zanzhu" v-if="userInfor.emblemType!=2">
+                        <!--<b>请求赞助</b>
+                        <span>示例：</span>-->
+                        <div class="tiaokuan">
+                            <img src="images/mao.jpg" alt="">
+                            <p>
+                                <i style="display:block;">您可以申请BABA官方赞助。</i>
+                                <a href="###">点击查看申请条件</a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="hasBottom">
+                        <b>诚信金</b>
+                        <input placeholder='1-10元'
+                               v-model="faithMoney"
+                               type="text"
+                               @input="limitEnter"
+                               style="height: 50px;line-height: 50px;">
+                    </div>
+                </div>
+                <div class="result inRight">
+                    <a class="btn1" href="javascript:;" @click="sendData">提交申请</a>
+                    <a class="btn2" href="###">取消</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+<script src="js/jquery-1.10.1.min.js"></script>
+<script src="js/laydate/laydate.js"></script>
+<script src="js/main.js"></script>
+<script src="js/vue.js"></script>
+<script src="js/polyfill.object-fit.min.js"></script>
+<script>
+    new Vue({
+        el: '.pulice',
+        data: {
+            api:api,
+            userInfor: userInfor,
+            yulan: '',
+            showOrhide: false,
+            seletedVal: '1v1',  //下拉选择的文本
+            radioArr: 1, // 单选框的值
+            bmTime: '',
+            actName: '', //活动名称
+            gameName: '', // 游戏名称
+
+            radioFlag: 1, //是否需要服务器支持
+            gameModelType: 1, //游戏模式
+            // isNeedSupport:'',
+            actRule: '', //活动规则
+            sponsor: '', //申请赞助
+            faithMoney: '', //诚信金
+            gameTime: '', //活动时间
+            actCover: '', // 活动封面
+            prevInfor: ''
+        },
+        watch: {
+            yulan(){
+                /* var that=this;
+                 this.$nextTick(function(){
+                 that.scaleImage($('#imgs')[0], 220, 193)
+                 }) */
+            }
+        },
+        methods: {
+            logOut(){
+                $.ajax({
+                    url: api + '/baba/act/logout',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        window.sessionStorage.removeItem('userInfor')
+                        window.location.reload()
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            getPrevInfor(){
+                var that = this;
+                $.ajax({
+                    url: api + '/baba/act/getLatestActByUserId',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        that.actCover = res.data.actCover
+                        that.faithMoney = res.data.actFaithMoney
+                        that.gameModelType = res.data.gameModelType //123
+                        that.actName = res.data.actName
+                        that.gameName = res.data.actGameName
+                        that.actRule = res.data.actRule
+                        that.sponsor = res.data.sponsor
+                        that.radioFlag = res.data.isNeedSupport
+
+                        // 设置活动时间
+                        that.gameTime = res.data.actTime
+                        $("#demo1").val(that.gameTime)
+                        console.log(new Date($("#demo1").val()).getTime())
+                        var date = new Date(new Date($("#demo1").val()).getTime() - (1 * 60 * 60 * 1000))
+                        that.bmTime = timestampToTime(date)
+                        //模式名称
+                        that.seletedVal = res.data.actGameModel
+                        //预览
+                        that.yulan = res.data.actCover
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            limitEnter(){
+                if (!/^[0-9]\d*$/.test(this.faithMoney)) {
+                    this.faithMoney = ''
+                    //jalert('请输入1-10元的整数')
+                }
+                if (this.faithMoney > 10) {
+                    this.faithMoney = 10
+                    //jalert('请输入1-10元的整数')
+                }
+            },
+            // 下拉 选择游戏 v
+            xiala(){
+                this.showOrhide = !this.showOrhide
+            },
+            changeShow(val, type){
+                this.seletedVal = val
+                this.gameModelType = type
+                this.showOrhide = false
+                var that = this
+                document.onclick = function () {
+                    that.showOrhide = false
+                }
+            },
+            // 上传图片
+            uploadImg($event){
+                var file = $event.target.files[0]
+                var url1 = URL.createObjectURL(file);
+                this.yulan = url1;
+
+                var url = 'https://image.llzg.cn/iserver/upload/single?thumb=yes&callback=https://ciyunsi.llzg.cn/upload/passdata'
+                var formData = new FormData();
+                formData.append('Filedata', file);//第一张图片
+                var that = this;
+                $.ajax({
+                    url: url,
+                    type: 'post',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (res) {
+                        loading.hide()
+                        console.log(JSON.parse(res))
+                        that.actCover = JSON.parse(res).url
+                        console.log(that.actCover)
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            // 选择时间
+            selectedTime(id){
+                var that = this
+                laydate({
+                    elem: id, //需显示日期的元素选择器
+                    event: 'click', //触发事件
+                    type: 'datetime',
+                    format: 'YYYY-MM-DD hh:mm:ss', //日期格式
+                    istime: true, //是否开启时间选择
+                    isclear: true, //是否显示清空
+                    istoday: true, //是否显示今天
+                    issure: true, //是否显示确认
+                    festival: true, //是否显示节日
+                    min: '1900-01-01 00:00:00', //最小日期
+                    max: '2099-12-31 23:59:59', //最大日期
+                    start: '2018-6-15 23:00:00',  //开始日期
+                    fixed: false, //是否固定在可视区域
+                    zIndex: 99999999, //css z-index
+                    choose: function (dates) { //选择好日期的回调
+                        that.gameTime = dates
+                        console.log(that.gameTime)
+                        var date = new Date(new Date(dates).getTime() - (1 * 60 * 60 * 1000))
+                        that.bmTime = timestampToTime(date)
+                    }
+                })
+            },
+            // 发送数据
+            sendData(){
+                /* var text=UM.getEditor('myEditor').getContentTxt()
+                 var html=UM.getEditor('myEditor').getPlainTxt()
+                 if(text!="" || text!='请描述一下你的活动规则、玩法，以及需要注意的事项，以保证大家都能理解。'){
+                 this.actRule=html
+                 } */
+
+                if (!this.actName) {
+                    jalert('请输入活动名称')
+                    return false
+                }
+                if (this.actName.length > 48) {
+                    jalert('活动名称太长')
+                    return false
+                }
+                if (!this.gameName) {
+                    jalert('请输入游戏名称')
+                    return false
+                }
+                if (!this.actCover) {
+                    jalert('请上传封面图片')
+                    return false
+                }
+                if (!this.gameTime) {
+                    jalert('请输入活动时间')
+                    return false
+                }
+                if (!this.actRule) {
+                    jalert('请输入活动规则')
+                    return false
+                }
+                /* if (!this.sponsor && userInfor.emblemType!=2) {
+                 jalert('请输入赞助规则')
+                 return false
+                 } */
+
+                if (!this.faithMoney) {
+                    jalert('请输入诚信金')
+                    return false
+                }
+
+                var that = this;
+                var obj = {
+                    actName: that.actName,
+                    gameName: that.gameName,
+                    gameModelType: that.gameModelType, // 1.淘汰5v5; 2.乱斗；3.娱乐  游戏模式
+                    isNeedSupport: that.radioFlag, //是否需要服务器 1.是0不是
+                    actRule: that.actRule,
+                    sponsor: that.sponsor,
+                    faithMoney: that.faithMoney,
+                    gameTime: that.gameTime,
+                    actCover: that.actCover
+                }
+                console.log(obj)
+                $.ajax({
+                    url: api + '/baba/act/createActivity',
+                    type: 'post',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: JSON.stringify(obj),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if (res.code == 'LPB0001') {
+                            $.Prompt('活动已提交，请等待审核', function () {
+                                window.location.href = "index.html"
+                            })
+                        } else if (res.code == 'LPB0002') {
+                            $.Prompt(res.message);
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            }
+        },
+        mounted(){
+            var that = this;
+            this.selectedTime('#demo1')
+            // this.getPrevInfor()
+            objectFit.polyfill({
+                selector: 'img',
+                fittype: 'cover'
+            });
+
+            //实例化编辑器
+            var um = UM.getEditor('myEditor');
+            um.addListener('focus', function () {
+                $('#tishi').html('')
+            });
+            um.addListener('blur', function () {
+                var text = UM.getEditor('myEditor').getContent()
+                console.log(text)
+                if (text == '') {
+                    $('#tishi').html('请描述一下你的活动规则、玩法，以及需要注意的事项，以保证大家都能理解。')
+                } else {
+                    that.actRule = text
+                    console.log(that.actRule)
+                }
+            });
+        }
+    })
+
+    function timestampToTime(timestamp) {
+        var date = new Date(timestamp);
+        Y = date.getFullYear() + '-';
+        M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+        D = date.getDate() + ' ';
+        h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
+        m = date.getMinutes() < 10 ? '0' + date.getMinutes() + ':' : date.getMinutes() + ':';
+        s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
+        return Y + M + D + h + m + s;
+    }
+</script>

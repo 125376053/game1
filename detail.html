@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <link rel="icon" href="images/favicon.ico">
+    <script src="js/limit.js"></script>
+    <link rel="stylesheet" href="css/all.css">
+    <link rel="stylesheet" href="css/polyfill.object-fit.min.css">
+</head>
+<body>
+<div class="pulice" v-cloak>
+    <div class="header">
+        <div class="headerCenter">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png">
+                </a>
+            </div>
+            <div class="nav_right">
+                <div class="nav" v-if="!userInfor || (userInfor && userInfor.role==0)">
+                    <a href="index.html" class="activeStyle">
+                        <span>活动</span>
+                    </a>
+                    <a href="jinxing.html">
+                        <span>进行中</span>
+                    </a>
+                    <a href="lishi.html">
+                        <span>历史</span>
+                    </a>
+                    <a :href="api+'/static/good/list.html'">
+                        <span>游戏商城</span>
+                    </a>
+                    <a href="upload.html">
+                        <span>发起活动</span>
+                    </a>
+                    <a target="_blank" href="http://jy.babagame.vip/">
+                        <span>[奖励与规则]</span>
+                    </a>
+                </div>
+                <div class="nav" v-if="userInfor && userInfor.role==1">
+                    <a href="check.html" class="activeStyle">
+                        <img src="images/1.png" alt="">
+                        <span>活动审核</span>
+                    </a>
+                    <a href="userlist.html">
+                        <img src="images/2.png" alt="">
+                        <span>用户管理</span>
+                    </a>
+                </div>
+                <div class="fixedRight">
+                    <a href="login.html" v-if="!userInfor">
+                        <img class="img1" src="images/rentou.png" alt="">
+                        <span>登录</span>
+                    </a>
+                    <a href="center.html" v-else>
+                        <p>
+                            <span>{{userInfor.nickName}}</span>
+                            <i @click.stop.prevent="logOut">[退出]</i>
+                        </p>
+                        <img class="img2" :src="userInfor.avatar||'images/renxing.png'" alt="">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="detail">
+        <div class="banner_action">
+            <img class="" :src="detailData.actCover" alt="">
+            <p class="bgcolor"></p>
+            <div class="infor">
+                <p>
+                    <span class="span1">活动名称:</span>
+                    <span>{{detailData.actName}}</span>
+                    <a href="###">{{getStatus(detailData.actStatus)}}</a>
+                </p>
+                <p>
+                    <span class="span1">游戏:</span>
+                    <span>{{detailData.actGameName}}</span>
+                </p>
+                <p>
+                    <span class="span1">活动时间:</span>
+                    <span>{{detailData.actTime}}</span>
+                </p>
+                <p>
+                    <span class="span1">模式:</span>
+                    <span>{{detailData.actGameModel}}</span>
+                </p>
+            </div>
+            <div class="banner_footer">
+                <div class="left" id="tabBtn">
+                    <p
+                            :class="{tabCurrent:currentIndex==0}"
+                            @click="tabFn(0,detailData.actStatus,detailData)"
+                            class="p1">规则
+                    </p>
+                    <p
+                            :class="{tabCurrent:currentIndex==1}"
+                            @click="tabFn(1,detailData.actStatus,detailData)"
+                            class="p1">
+                        {{tabStatus(detailData.actStatus)}}
+                    </p>
+                </div>
+                <div class="right">
+                    <p>
+                        <span class="span1">发起人</span>
+                        <span>{{detailData.nickName}}</span>
+                    </p>
+                    <img
+                            :src="detailData.avatar||'images/renxing.png'"
+                            alt="">
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab baoming" v-if="currentIndex==0">
+                <h1><span></span><i>规则</i></h1>
+                <p class="append" v-html="detailData.actRule"></p>
+            </div>
+
+            <div class="tab baoming" v-if="currentIndex==1 && detailData.actStatus==4">
+                <div class="bmform" v-if="detailData.enroStatus==-1">
+                    <p class="p1">
+                        <span style="color:red;">*</span>
+                        <input v-model="nickName" type="text" placeholder="QQ昵称">
+                    </p>
+                    <p class="p1">
+                        <span style="color:red;">*</span>
+                        <input v-model="mobile" type="text" placeholder="手机">
+                    </p>
+                    <p class="p1">
+                        <span style="color:red;">*</span>
+                        <input v-model="qqAccount" type="text" placeholder="QQ">
+                    </p>
+                    <p class="p1">
+                        <input v-model="steamUrl" type="text" placeholder="steam直播地址">
+                    </p>
+                    <a class="tijiao" href="javascript:;" @click="bmForm">提交</a>
+                </div>
+                <div class="bmtijiao" v-if="detailData.enroStatus==1">
+                    <div class="erweima">
+                        <img class="ma" :src="erweima" alt="">
+                        <img class="icon" src="images/aliicon.png" width="28" height="28">
+                    </div>
+                    <div class="tijiaoInfor">
+                        <div class="title">
+                            <span><i>￥</i>{{detailData.actFaithMoney}}</span>
+                            <span>诚信金</span>
+                        </div>
+                        <div class="text">
+                            <p>为了所有参加活动人员的游戏体验，请缴纳诚信保证金。</p>
+                            <p>准时参加活动将全额返还诚信金。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bmsuccess" v-if="detailData.enroStatus==2">
+                    <h1><span></span><i>已报名</i></h1>
+                    <div>
+                        <p>你已成功报名本次活动，请及时关注活动进度，以免错过活动时间导致诚信值降低。</p>
+                        <p>小提示:分组后与队友多多开黑能提高默契，比赛时获胜的几率将会大增。</p>
+                    </div>
+                </div>
+            </div>
+            <!--天梯：选项卡第2个 状态为567-->
+            <div class="tab guize" v-if="currentIndex==1 && (detailData.actStatus==5 || detailData.actStatus==6 || detailData.actStatus==7) ">
+                <div class="dui dui1">
+                    <h1 class="yanse1">我的战队</h1>
+                    <div class="listWrap" v-if="groupInfo.users && groupInfo.users.length>0">
+                        <p class="list">
+                            <span>{{groupInfo.users[0].nickName}}</span>
+                            <img :src="groupInfo.users[0].avatar" alt="">
+                        </p>
+                    </div>
+                    <div class="listWrap" v-if="groupInfo.users && groupInfo.users.length>1">
+                        <p class="list" v-if="groupInfo.users[1]">
+                            <span>{{groupInfo.users[1].nickName}}</span>
+                            <img :src="groupInfo.users[1].avatar" alt="">
+                        </p>
+                        <p class="list" v-if="groupInfo.users[2]">
+                            <span>{{groupInfo.users[2].nickName}}</span>
+                            <img :src="groupInfo.users[2].avatar" alt="">
+                        </p>
+                    </div>
+                    <div class="listWrap" v-if="groupInfo.users && groupInfo.users.length>3">
+                        <p class="list" v-if="groupInfo.users[3]">
+                            <span>{{groupInfo.users[3].nickName}}</span>
+                            <img :src="groupInfo.users[3].avatar" alt="">
+                        </p>
+                        <p class="list" v-if="groupInfo.users[4]">
+                            <span>{{groupInfo.users[4].nickName}}</span>
+                            <img :src="groupInfo.users[4].avatar" alt="">
+                        </p>
+                    </div>
+                </div>
+                <div class="dui dui2">
+                    <h1 class="yanse2">我的对手</h1>
+                    <div class="listWrap" v-if="relatedGroupInfo.users && relatedGroupInfo.users.length>0">
+                        <p class="list">
+                            <img :src="relatedGroupInfo.users[0].avatar" alt="">
+                            <span>{{relatedGroupInfo.users[0].nickName}}</span>
+                        </p>
+                    </div>
+                    <div class="listWrap" v-if="relatedGroupInfo.users && relatedGroupInfo.users.length>1">
+                        <p class="list" v-if="relatedGroupInfo.users[1]">
+                            <img :src="relatedGroupInfo.users[1].avatar" alt="">
+                            <span>{{relatedGroupInfo.users[1].nickName}}</span>
+                        </p>
+                        <p class="list" v-if="relatedGroupInfo.users[2]">
+                            <img :src="relatedGroupInfo.users[2].avatar" alt="">
+                            <span>{{relatedGroupInfo.users[2].nickName}}</span>
+                        </p>
+                    </div>
+                    <div class="listWrap" v-if="relatedGroupInfo.users && relatedGroupInfo.users.length>3">
+                        <p class="list" v-if="relatedGroupInfo.users[3]">
+                            <img :src="relatedGroupInfo.users[3].avatar" alt="">
+                            <span>{{relatedGroupInfo.users[3].nickName}}</span>
+                        </p>
+                        <p class="list" v-if="relatedGroupInfo.users[4]">
+                            <img :src="relatedGroupInfo.users[4].avatar" alt="">
+                            <span>{{relatedGroupInfo.users[4].nickName}}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="message">
+
+            <div class="shuru">
+                <p class="touxiang">
+                    <img class="img2" width="55" height="55" :src="userInfor&&userInfor.avatar||'images/renxing.png'"><span>{{userInfor&&userInfor.nickName}}</span></p>
+                <div class="upload">
+                    <div class="input">
+                        <textarea maxlength="180" v-model="message" @input="inputText" placeholder="少年人，不说点什么？"></textarea><span class="shuzi">{{remnant}}/180</span>
+                    </div>
+
+                    <div class="uploadArr">
+                        <div class="input2" v-if="hideVideo">
+                            <input v-model="linkurl" type="text" placeholder="请输入视频链接地址">
+                        </div>
+                        <div class="loadArr">
+                            <div class="btnload" @click="enterVideo">{{hideVideo?'确认上传':'插入视频'}}</div>
+                            <div class="btnload">
+                                <input ref="uploadimg" name="Filedata" type="file" accept="image/*" @change="uploadImg">上传图片</div>
+                            <a class="btnload" href="javascript:;" @click="messageFn">留言</a>
+                        </div>
+                    </div>
+
+
+                    <div style="margin:10px 0 0;clear:both;padding-top:15px;border-top: 1px solid #ccc;">
+                        <div class="videoImg" v-if="videoObj">
+                            <p style="cursor:pointer;" v-for="(key,value) in videoObj" @click="gotoVideoPage">
+                                <img src="images/videoBg.jpg" alt="">
+                                <span @click.stop.prevent="removeVideo(key,value)">×</span>
+                            </p>
+                        </div>
+                        <div class="uploadList" v-if="uploadList.length>0">
+                            <p v-for="(item,index) in uploadList" @click="zhang(item.url)">
+                                <img :src="item.url" alt="">
+                                <span @click.stop.prevent="remove(item,index)">×</span>
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <ul class="messageList" v-for="(item,index) in msgs" >
+                <li class="show">
+                    <div class="left">
+                        <!-- <img class="imgmessageTouXiang" :src="item.avatar" alt=""> -->
+                        <img class="img2" width="55" height="55"
+                             :src="item.avatar||'images/renxing.png'" alt="">
+                        <p class="name">{{item.nickName}}</p>
+                        <p class="icon">
+                            <b></b>
+                            <span>{{item.emblem}}</span>
+                        </p>
+                        <div class="messageInfor" v-if="item.imgs.length>0">
+                            <p>签到<span>{{item.signCount}}</span></p>
+                            <p>参与<span>{{item.participateCount}}</span></p>
+                            <p>鸽子<span>{{item.escapeCount}}</span></p>
+                            <p>被赞<span>{{item.praiseCount}}</span></p>
+                            <p>活跃<span>{{item.activeCount}}</span></p>
+                        </div>
+                    </div>
+                    <div class="right">
+                        <div class="top">
+                            <span class="ceng">{{item.level}}L</span>
+                            <span class="lou" v-if="item.isActUser">楼主</span>
+                            <!--1 点过 灰色 不让点 0亮色  -->
+                            <p
+                                    class="clickZan"
+                                    @click="clickZan(item)"
+                                    :class="item.hasPraise?'clickZan':'clickZan2'"
+                            >
+                                <b :class="item.zan?'zan':'nozan'"></b>
+                                <span>{{item.msgPraiseCount}}</span>
+                            </p>
+                        </div>
+                        <div class="text">{{item.message}}</div>
+                        <div class="bottomImgs" v-if="item.imgs.length>0">
+                            <!-- <div class="bottomImgsWrap">
+                                <img :src="item1.imgUrl" alt="" v-for="(item1,index1) in item.imgs">
+                            </div> -->
+                            <div class="bottomImgsWrap">
+                                <div class="imgs" v-for="(item1,index1) in item.imgs" @click="zhang(item1.imgUrl)">
+                                    <img :src="item1.imgUrl" alt="" >
+                                    <span>{{item1.imgDesc}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+
+        <!--大图展示层-->
+        <div @click="imgflag=false" v-if="imgflag" style="position: fixed;left:0;top:0;right:0;bottom:0; background: rgba(0,0,0,.5)">
+            <div ref="vvv" style="position:absolute;left:5%;top:10%;width:90%;height:80%;">
+                <img ref="bbb" :src="img1" alt="">
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+<script src="js/jquery-1.10.1.min.js"></script>
+<script src="js/polyfill.object-fit.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/vue.js"></script>
+<script>
+    new Vue({
+        el: '.pulice',
+        data: {
+            api: api,
+            userInfor: userInfor,
+       	 	imgflag:false,
+            img1: '',
+        	hideVideo:false,
+            detailData: '',
+            currentIndex: -1,
+            message:'',
+            remnant:0,
+            uploadList:[],
+            linkurl:'', //视频链接地址
+            videoObj:'',
+            msgs:[],
+            msgId:'',
+            userId:'',
+            enroId:'',
+            actId:getSearchString('id') || 1, //
+            uploadImgs:[], //上传返回的图片地址
+            nickName:'',
+            qqAccount:'',
+            mobile:'',
+            steamUrl:'',
+            erweima:'',//images/erweima.png
+            groupInfo:'', // 我的战队
+            relatedGroupInfo:'', //对手
+            flag:true,
+            timer:null,
+            item:0,
+            search:'',
+            searchType:0, //0 1 2
+            searchKey:'',
+        },
+        watch:{
+        	'detailData.enroStatus'(a){
+        		if(a==1){
+        			this.createMa()
+        		}
+        	}
+        },
+        computed: {        
+            getStatus(status){
+                return function (status) {
+                    if (!status || status == 1) {
+                        return '审核中'
+                    }
+                    if (status == 2) {
+                        return '审核通过'
+                    }
+                    if (status == 3) {
+                        return '拒绝'
+                    }
+                    if (status == 4) {
+                        return '报名中'
+                    }
+                    if (status == 5) {
+                        return '分组中'
+                    }
+                    if (status == 6) {
+                        return '游戏中'
+                    }
+                    if (status == 7) {
+                        return '已经结束'
+                    }
+                }
+            },
+            tabStatus(status){
+                return function (status) {
+                    if (!status || status == 1) {
+                        return '审核中'
+                    }
+                    if (status == 2) {
+                        return '审核通过'
+                    }
+                    if (status == 3) {
+                        return '拒绝'
+                    }
+                    if (status == 4) {
+                        return '报名'
+                    }
+                    if (status == 5) {
+                        return '实况'
+                    }
+                    if (status == 6) {
+                        return '实况'
+                    }
+                    if (status == 7) {
+                        return '已结束'
+                    }
+                }
+            }
+        },
+        mounted(){
+            this.getData()
+            objectFit.polyfill({
+                selector: 'img',
+                fittype: 'cover'
+            });
+        },
+        methods: {
+            getData(){
+                var that = this;
+                $.ajax({
+                    url: api + '/baba/act/getActivityDetailById',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: {
+                        actId:that.actId
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        if(res.code == 'LPB0001'){
+                            that.detailData = res.data
+                            that.msgs=(res.data.msgs).reverse()
+                            that.groupInfo=res.data.groupInfo
+                            that.relatedGroupInfo=res.data.relatedGroupInfo
+                            that.userId=res.data.userId
+                            that.enroId=res.data.enroId
+                            console.log(that.userId)
+
+                            that.nickName=res.data.lastEnroInfo.nickName
+                            that.qqAccount=res.data.lastEnroInfo.qq
+                            that.mobile=res.data.lastEnroInfo.mobile
+                            that.steamUrl=res.data.lastEnroInfo.steamUrl
+
+                            that.$nextTick(function(){
+                                that.radomPosition()
+                            })
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            logOut(){
+                $.ajax({
+                    url:api+'/baba/act/logout',
+                    type:'get',
+                    beforeSend:function(){
+                        loading.show()
+                    },
+                    success:function(res){
+                        loading.hide()
+                        window.sessionStorage.removeItem('userInfor')
+                        window.location.reload()
+                    },
+                    error:function(){
+                        loading.hide()
+                    }
+                })
+            },
+        	gotoVideoPage(){
+        		window.location.href=this.linkurl
+        	},
+        	removeVideo(key,value){
+        		this.videoObj=''
+        	},
+			checkStatus(){
+				var that = this;
+                var actId = this.actId
+                $.ajax({
+                    url: api + '/baba/act/getEnroStatusById',
+                    type: 'get',
+                    data: {
+                    	enroId:that.enroId
+                    },
+                    success: function (res) {
+                        console.log(res)
+                        if(res.code == 'LPB0001'){
+                        	if(res.data==2){
+                        		clearInterval(that.timer)
+                        		that.item=0
+                        	}
+                        	that.detailData.enroStatus=res.data
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })	
+        	},
+        	radomPosition(){
+                $(".messageList li .bottomImgsWrap").each(function () {
+                    var imgs = $(this).find('.imgs')
+                    radomPosition(imgs)
+                })
+                function radomPosition(imgs) {
+                    imgs.each(function (index, item) {
+                        var radom = Math.ceil(Math.random() * 50)
+                        $(this).css({
+                            left: 100 + (index * ($(item).width() + 50) + radom),
+                            top: radom-10,
+                            transform: 'rotate(' + radom*1.2 + 'deg)'
+                        })
+                    })
+                }
+            },
+            tabFn(index, n, item){
+            	if(index!=this.currentIndex){
+            		this.$set(item,'flag',false)
+            		this.currentIndex=-1
+            	}
+            	// 不让点
+                if (!n ||n == 1 || n == 2 || n == 3) {
+                    return false
+                }else{
+                	if(!item.flag){
+                		this.$set(item,'flag',true)
+                	}else{
+                		this.$set(item,'flag',false)
+                	}
+                	
+                	if(item.flag){
+                		this.currentIndex=index
+                	}else{
+                		this.currentIndex=-1
+                	}
+                	
+                }
+            },
+            clickZan(item){
+            	console.log(item)
+                this.msgId=item.msgId
+                //是否点过赞 1点过 不让点
+            	if(item.hasPraise){
+                    //item.msgPraiseCount+=1
+                    //item.praiseCount+=1
+                    //this.zanFn()
+                    //item.hasPraise=!item.hasPraise
+                }else{
+                    item.msgPraiseCount+=1
+                    item.praiseCount+=1
+                    this.zanFn()
+                    item.hasPraise=true
+                }
+            },
+            zanFn(){
+                var that = this;
+                $.ajax({
+                    url: api + '/baba/act/praiseMsg',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: {
+                        msgId:this.msgId
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if(res.code == 'LPB0001'){
+                        	
+                        }else if(res.code == 'LPB0002'){
+                        	$.Prompt(res.message);
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            noZanFn(){
+                var that = this;
+                $.ajax({
+                    url: api + '/baba/act/unPraiseMsg',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: {
+                        msgId:this.msgId
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+						if(res.code == 'LPB0001'){
+                        	
+                        }else if(res.code == 'LPB0002'){
+                        	$.Prompt(res.message);
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            // 数字限制
+            inputText() {
+                console.log(this.message)
+                var txtVal = this.message.length
+                this.remnant = 180 - txtVal
+            },
+            // 插入视频
+            enterVideo($event){
+            	if(this.hideVideo){
+            		if(this.linkurl.length<=0){
+                        jalert('请输入视频链接地址')
+                        return false
+                    }/* else if(this.linkurl.search('player.html')<0){
+                        jalert('视频格式输入不正确')
+                        return false
+                    } */else{
+                    	this.videoObj={
+                    		url:this.linkurl
+                    	}
+                    	console.log(this.videoObj)
+                    }
+            	}
+            	this.hideVideo=true
+            },
+            // 上传图片
+            uploadImg($event){
+                var file = $event.target.files[0]
+                var url = URL.createObjectURL(file);
+                this.uploadList.push({
+                    url:url,
+                    desc:file.name
+                })
+                if(this.uploadList.length>5){
+                    this.uploadList.shift()
+                }
+                var url='https://image.llzg.cn/iserver/upload/single?thumb=yes&callback=https://ciyunsi.llzg.cn/upload/passdata'
+                var formData=new FormData();
+                formData.append('Filedata',file);//第一张图片
+                var that = this;
+                $.ajax({
+                    url: url,
+                    type: 'post',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data:formData,
+                    processData:false,
+                    contentType:false,
+                    success: function (res) {
+                        loading.hide()
+                        console.log(JSON.parse(res))
+                        //that.uploadImgs.push(JSON.parse(res).url)
+                        that.uploadImgs.push({
+                            desc:file.name,
+                            imgUrl:JSON.parse(res).url,
+                        })
+                        console.log(that.uploadImgs)
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            // 删除图片
+            remove(item,index){
+                this.uploadList.splice(index,1)
+                this.$refs.uploadimg.value =''
+            },
+            // 提交留言
+            messageFn(){
+                if(this.message.length<=0){
+                    jalert('请输入留言信息')
+                    return false
+                }/* else if(this.uploadList.length<=0){
+                    jalert('请上传图片')
+                    return false
+                } */
+                var that = this;
+                var obj={
+               		videoUrl:{
+                       desc:'',
+                       imgUrl:that.linkurl
+                    },
+                    imgs:that.uploadImgs,
+                    desc:that.message,
+                    pid:0,
+                    actId:this.actId
+                }
+                $.ajax({
+                    url: api +'/baba/act/leaveMsg',
+                    type: 'post',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data:JSON.stringify(obj),
+                    contentType : "application/json",
+                    dataType : "json",
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if(res.code == 'LPB0001'){
+                        	window.location.reload()
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            //进行报名
+            bmForm(){
+            	var qqMoshi =/^[1-9][0-9]{4,12}$/;
+                var telMoshi = /^1[34578]\d{9}$/; //手机号验证
+                if(!this.nickName){
+                    jalert('请输入昵称')
+                    return false
+                }
+
+                if(this.mobile === ''){
+                    jalert('请输入手机号')
+                    return false
+                }
+                if(!telMoshi.test(this.mobile)){
+                    jalert('请输入合法的手机号')
+                    return false
+                }
+
+                if(!this.qqAccount){
+                    jalert('请输入qq')
+                    return false
+                }
+                if(!qqMoshi.test(this.qqAccount)){
+                    jalert('请输入有效的qq号')
+                    return false
+                }
+
+                /* if(!this.steamUrl){
+                    jalert('请输入视频地址')
+                    return false
+                } */
+                var that = this;
+                var obj={
+                    actId:this.actId,
+                    nickName:this.nickName,
+                    qqAccount:this.qqAccount,
+                    mobile:this.mobile,
+                    steamUrl:this.steamUrl
+                }
+                $.ajax({
+                    url: api + '/baba/act/apply',
+                    type: 'post',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data:JSON.stringify(obj),
+                    contentType : "application/json",
+                    dataType : "json",
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if(res.code == 'LPB0001'){
+                        	that.detailData.enroStatus=1
+                        	that.enroId=res.data
+                        }else if(res.code == 'LPB0002'){l
+                        	 $.Prompt(res.message);
+                        }
+                        
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            // 二维码
+            createMa(){
+                var that = this;
+                var qrsrc = api+'/baba/act/gotoCreateOrder?enroId='+this.enroId
+                that.erweima = api+'/baba/act/getQrCode?chl='+encodeURIComponent(qrsrc)+'&chs=150x150'
+                		
+                var that=this
+        		clearInterval(this.timer)
+		        this.timer = setInterval(function(){
+		        	if (that.item >= 600000) {
+			            that.item = 0
+			            clearInterval(that.timer)
+		          	} else {
+			            that.item = that.item + 3000
+			            that.checkStatus()
+		          	}
+		        }, 3000)		
+            },
+            zhang(n){
+                //展开弹出
+                this.imgflag = true;
+                //图片清空
+                this.img1='';
+
+                //加载核心方法
+                this.$nextTick(() => {
+                    this.gongju(n)
+                })
+
+                //处理缩放
+                window.onresize=()=>{
+                    this.gongju(n)
+                }
+            },
+            gongju(n){
+                var maxWidth = this.$refs.vvv.offsetWidth;
+                var maxHeight = this.$refs.vvv.offsetHeight;
+                this.$refs.vvv.style.lineHeight = maxHeight + 'px';
+                this.$refs.vvv.style.textAlign = "center";
+                this.$refs.bbb.style.verticalAlign = "middle";
+                var image = new Image();
+                image.src = n;
+
+                if(image.width>0 && image.height>0){
+                    //宽度高度大于0 才加载大图
+                    this.img1 = n;
+                    //不能开启onload 否则大图初始展示与获取后展示 存在偏差 会在加载完后 样式上闪跳
+                    //image.onload=()=>{
+                    if (image.width < maxWidth && image.height < maxHeight) {// 当图片比图片框小时不做任何改变
+                        this.$refs.bbb.width = image.width;
+                        this.$refs.bbb.height = image.height;
+                    } else {
+                        //原图片宽高比例 大于 图片框宽高比例,则以框的宽为标准缩放，反之以框的高为标准缩放
+                        if (maxWidth / maxHeight <= image.width / image.height) {
+                            this.$refs.bbb.width = maxWidth;   //以框的宽度为标准
+                            this.$refs.bbb.height = maxWidth * (image.height / image.width);
+                        }
+                        else {//原图片宽高比例 小于 图片框宽高比例
+                            this.$refs.bbb.width = maxHeight * (image.width / image.height);
+                            this.$refs.bbb.height = maxHeight;   //以框的高度为标准
+                        }
+                    }
+                    //}
+                }
+            }
+        }
+    })
+</script>

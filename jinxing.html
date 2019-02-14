@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <link rel="icon" href="images/favicon.ico">
+    <script src="js/limit.js"></script>
+    <link rel="stylesheet" href="css/all.css">
+    <link rel="stylesheet" href="css/polyfill.object-fit.min.css">
+</head>
+<body>
+
+<div class="pulice" v-cloak>
+    <div class="header">
+        <div class="headerCenter">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png">
+                </a>
+            </div>
+            <div class="nav_right">
+                <div class="nav" v-if="!userInfor || (userInfor && userInfor.role==0)">
+                    <a href="index.html">
+                        <span>活动</span>
+                    </a>
+                    <a href="jinxing.html" class="activeStyle">
+                        <span>进行中</span>
+                    </a>
+                    <a href="lishi.html">
+                        <span>历史</span>
+                    </a>
+                    <a :href="api+'/static/good/list.html'">
+                        <span>游戏商城</span>
+                    </a>
+                    <a href="upload.html">
+                        <span>发起活动</span>
+                    </a>
+                    <a target="_blank" href="http://jy.babagame.vip/">
+                        <span>[奖励与规则]</span>
+                    </a>
+                </div>
+                <div class="nav" v-if="userInfor && userInfor.role==1">
+                    <a href="check.html" class="activeStyle">
+                        <img src="images/1.png" alt="">
+                        <span>活动审核</span>
+                    </a>
+                    <a href="userlist.html">
+                        <img src="images/2.png" alt="">
+                        <span>用户管理</span>
+                    </a>
+                </div>
+                <div class="search">
+                    <img src="images/search.jpg" alt="">
+                    <input v-model="searchKey" type="text" placeholder="搜索">
+                </div>
+                <div class="fixedRight">
+                    <a href="login.html" v-if="!userInfor">
+                        <img class="img1" src="images/rentou.png" alt="">
+                        <span>登录</span>
+                    </a>
+                    <a href="center.html" v-else>
+                        <p>
+                            <span>{{userInfor.nickName}}</span>
+                            <i @click.stop.prevent="logOut">[退出]</i>
+                        </p>
+                        <img class="img2" :src="userInfor.avatar||'images/renxing.png'" alt="">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="index" v-cloak>
+        <div class="fengmianList">
+            <ul>
+                <li v-for="(item,index) in list">
+                    <a :href="'detail.html?id='+item.actId">
+                        <div class="img_w123">
+                            <img :src="item.actCover" alt="">
+                        </div>
+                        <div class="list_infor">
+                            <div class="left">
+                                <p class="p1">{{item.actName}}</p>
+                                <p class="p2">活动时间:<i>{{item.actTime}}</i></p>
+                                <p class="p3">诚信金:<span>￥{{item.actFaithMoney}}</span></p>
+                            </div>
+                            <div class="right">
+                                <img :src="item.avatar" alt="">
+                                <p>{{item.nickName}}</p>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div v-if="list.length==0" style=" text-align: center; line-height: 500px; font-size: 20px;">暂无数据</div>
+    </div>
+
+</div>
+
+</body>
+</html>
+<script src="js/jquery-1.10.1.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/vue.js"></script>
+<script src="js/polyfill.object-fit.min.js"></script>
+<script>
+    var index=new Vue({
+        el:'.pulice',
+        data:{
+            userInfor:userInfor,
+            api:api,
+            search:'',
+            imgs:[],
+            list:[],
+            searchType:0, //0 1 2
+            searchKey:'',
+            limit:10,
+            page:1,
+            pageFlag:true,
+            totalCount:0
+        },
+        watch:{
+            searchKey(a){
+                this.search=a
+                if(this.search.length>0){
+                    this.getData(1,this.search)
+                }
+            }
+        },
+        mounted(){
+            var that=this
+            this.getData(this.searchType,this.searchKey)
+            this.getMorn(function(){
+                that.pageFlag=false;
+                that.page++
+                if(that.page*that.limit>=that.totalCount){
+                    $.Prompt('已经没有数据了')
+                    return false
+                }else{
+                    that.getData(that.searchType,that.searchKey)
+                }
+            })
+            slide()
+
+            objectFit.polyfill({
+                selector: 'img',
+                fittype: 'cover'
+            });
+        },
+        methods:{
+            logOut(){
+                $.ajax({
+                    url:api+'/baba/act/logout',
+                    type:'get',
+                    beforeSend:function(){
+                        loading.show()
+                    },
+                    success:function(res){
+                        loading.hide()
+                        window.sessionStorage.removeItem('userInfor')
+                        window.location.reload()
+                    },
+                    error:function(){
+                        loading.hide()
+                    }
+                })
+            },
+            getData(type,key){
+                var that=this;
+                var obj={
+                    searchType:type,
+                    searchKey:key,
+                    limit:this.limit,
+                    page:this.page,
+                    actStatus:6
+                }
+                $.ajax({
+                    url:api+'/baba/act/getActivityList',
+                    type:'post',
+                    beforeSend:function(){
+                        loading.show()
+                    },
+                    contentType : "application/json",
+                    dataType : "json",
+                    data:JSON.stringify(obj),
+                    success:function(res){
+                        loading.hide()
+                        console.log(res)
+                        if(res.code == 'LPB0001'){
+                            that.list=that.list.concat(res.data.data.data||[])
+                            that.pageFlag=true;
+                            that.totalCount=res.data.data.totalCount
+                            that.imgs=res.data.f3
+                            that.$nextTick(function(){
+                                $(".fengmianList li:nth-child(3n)").css('margin-right','0')
+                            })
+                        }
+                    },
+                    error:function(){
+                        loading.hide()
+                    }
+                })
+            },
+            getMorn(cb){
+                var that=this;
+                var timer=null;
+                window.addEventListener('scroll',function(){
+                    clearTimeout(timer)
+                    timer=setTimeout(function(){
+                        var zHeight=$(document).height();//页面高度是文档高度 不是body高度
+                        var kHeight=$(window).height();
+                        var scrollTop=$(window).scrollTop();
+                        console.log(kHeight, scrollTop,zHeight)
+                        if(kHeight+scrollTop+200>=zHeight && that.pageFlag==true){
+                            cb()
+                        }
+                    },30)
+                },false)
+            }
+        }
+    })
+</script>

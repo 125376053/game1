@@ -1,0 +1,504 @@
+body{margin:0;padding:0;font-size:12px;color:#000;
+font-family:'寰蒋闆呴粦';}
+ul,li,p,dl,dt,dd,h1,h2,h3,input,i{margin:0;padding:0;list-style:none;border:0; outline:none;font-style:normal;}
+a:link,a:visited{text-decoration:none;color:#000;}
+img{ border:0;}
+[v-cloak] {
+    display: none;
+}
+
+.guanjun{ text-align:center;}
+.fixedRight{height: 60px; position: absolute; right:10px; top:20px; }
+.fixedRight a{ display:block; height:60px;}
+.fixedRight a p{float:left;margin-right:10px;margin-top:10px;}
+.fixedRight a p span{display:block;}
+.fixedRight a p i{display:block;}
+.fixedRight .img1{width: 13px;height: 17px; float: left;/* margin-top: 22px; */ margin-right:5px;}
+.fixedRight .img2{width: 58px;height: 58px; float: left; border:1px solid #fff;}
+
+.header{ height: 92px; background: url("https://www.babagame.vip/static/images/header_bg.jpg") repeat-x center bottom;}
+.headerCenter{ height: 92px; width: 1100px; margin: 0 auto;}
+.logo{width: 110px; float: left;}
+.logo img{ width: 100%;}
+.nav_right{ float: right;height: 88px;}
+.nav{ float: left;height: 88px;}
+.nav a{margin-top:30px;height:40px; font-size: 20px;color:#3d3d3d; float: left; cursor: pointer;
+margin-right:30px; padding: 0 10px;}
+.nav a img{ width: 28px;height: 28px; float: left;margin-right:10px;}
+.nav .activeStyle{border-bottom:4px solid #ffbb24;}
+.search{ width: 205px;height: 30px; float: left; margin-top: 30px;border-bottom:2px solid #d8d8d8;}
+.search>img{float: left; margin-top: 5px; margin-right: 5px; cursor: pointer;}
+.search>input{height: 30px;}
+
+.banner_action{ width: 1000px; margin: 20px auto; height: 395px; position: relative;}
+.banner_action img{ width: 1000px; height: 395px; display:block; object-fit:cover; }
+.bgcolor{width: 1000px; height: 395px; background:rgba(0,0,0,.5); position: absolute;left:0;top:0;}
+.banner_action .infor{ color:#fff;font-size: 20px; position: absolute; left:36px; top:210px;}
+.banner_action .infor>p{ margin-bottom: 10px; overflow:hidden; }
+.banner_action .infor .span1{ width: 100px; color: #fcfcfc; float: left;}
+.banner_action .infor span{ float: left;}
+.banner_action .infor a{ float:left; width: 76px;height: 24px; background: #f6bb43;font-size: 16px; color: #fff; text-align:center; line-height: 24px; margin-left: 20px; border-radius: 3px;}
+
+.banner_footer{ height: 73px; position: absolute; left:36px; right:25px; bottom:-20px;}
+.banner_footer .left{ float: left; margin-top:28px;}
+
+.banner_footer .left .p1{
+	width: 58px;
+	height: 24px; 
+	text-align: center;
+	line-height: 24px; 
+	float: left;cursor: 
+	pointer;margin: 0 5px;
+	background: #1c2938;
+	color:#fff;
+	border:1px solid #fff;
+}
+/*.banner_footer .left .p2{width: 58px;height: 24px; text-align: center;line-height: 24px; background: #1c2938;color:#fff; float: left; cursor: pointer;margin: 0 5px;}*/
+
+.banner_footer .left .tabCurrent{background: #f6bb43;color:#1c2938;}
+
+.banner_footer .right{ float: right;}
+.banner_footer .right p{ float: left; margin-right: 10px; color: #fff;margin-top:10px;}
+.banner_footer .right p span{ display: block; text-align: right; font-size: 16px;}
+.banner_footer .right p .span1{ font-size: 12px;}
+.banner_footer .right img{ float: left; width: 80px;height: 80px; border:1px solid #fff;}
+
+.tabs{width: 1000px; overflow: hidden; background: #f6f7fb; padding-top: 25px; border-bottom: 1px solid #ccc;
+margin: -20px auto; padding-bottom: 25px;}
+.tab{ }
+.tabs .dui{ width: 465px; float: left; overflow: hidden;}
+.tabs .dui1{text-align: right;margin-right: 35px; }
+.tabs .dui2{text-align: left;margin-left: 35px; }
+.tabs .dui .yanse1{ background: url("https://www.babagame.vip/static/images/blue.jpg") no-repeat right center;
+    background-size: 12px 30px; padding-right: 20px; }
+.tabs .dui .yanse2{ background: url("https://www.babagame.vip/static/images/yellow.jpg") no-repeat left center;
+    background-size: 12px 30px; padding-left: 20px;}
+.listWrap{ overflow: hidden;}
+.tabs .dui1 .list{height: 40px; line-height: 40px;margin: 5px 0; float: right; margin-right: 10px;}
+.tabs .dui2 .list{height: 40px; line-height: 40px;margin: 5px 0; float: left; margin-left: 12px;}
+.tabs .dui1 .list img{float:right;width: 42px;height: 42px; margin: 0 5px;}
+.tabs .dui2 .list img{float:left;width: 42px;height: 42px;margin: 0 5px;}
+
+.baoming{ padding: 0px 112px 20px 20px;}
+.baoming>h1{height: 30px; line-height: 30px; font-size: 18px;}
+.baoming>h1>span{ float: left; width:10px; height: 30px; background: #666c78;margin-right: 10px;}
+.baoming p{ padding-left: 28px; line-height: 20px;margin-top: 10px;}
+
+.bmform>.p1{height: 30px;line-height: 30px;}
+.bmform>.p1 input{height: 30px;line-height:30px; background: none; width: 588px; border-bottom: 1px solid #ccc;}
+.tijiao{ width: 60px;height: 30px;line-height: 30px; background: #b1a3ad;color:#fff;text-align: center; font-size: 14px; display: block;margin-top: 20px;margin-left: 25px;}
+
+.bmtijiao{padding-left: 20px; overflow: hidden;}
+.erweima{ width: 150px;height:150px; float:left; position:relative;}
+.erweima .ma{width: 150px;height:150px;}
+.erweima .icon{width: 28px;height:28px; position:absolute; left:50%;top:50%;margin-left:-14px;margin-top:-14px;}
+.tijiaoInfor{ float: left; width: 668px;margin-left: 20px;}
+.tijiaoInfor .title{margin-top: 43px;}
+.tijiaoInfor .title span{color:#656D78;font-size:14px;}
+.tijiaoInfor .title span i{color:#000; font-size: 20px;}
+.tijiaoInfor .text{margin-top: 20px; line-height: 25px;color:#656D78;font-size:14px;}
+.bmsuccess{padding-left: 20px;}
+/*闂備椒绱徊楣冩偡閵娾晛鐓濋柨鐕傛嫹*/
+.message{ width: 1000px; margin:25px auto 0; overflow: hidden;position: relative;background: #f6f7fb;}
+.shuru{ background: #e6e9ee; padding: 10px 20px;  margin-top: 30px; overflow: hidden;}
+.touxiang{ position: absolute; top:0px; left:40px;}
+.touxiang img{float: left;border: 1px solid #fff;}
+.touxiang span{float: left; margin-top: 15px;margin-left:10px;}
+.upload{ overflow: hidden; position:relative;}
+.input{ height: 72px;margin-top: 15px; position: relative;width: 880px;float: left;
+margin-left: 80px;}
+.input textarea{width: 100%;height:55px; border: 0; background: none; resize: none; 
+border-left: 1px solid #b9c0ca; outline: none; padding:5px 10px; display:block;
+}
+.shuzi{ position: absolute;bottom: 5px;right: 5px;}
+
+.btnload{ float: left; width: 122px; height: 40px; margin: 0 15px; background:#666c78; color:#fff;text-align: center; line-height: 40px; position: relative; cursor: pointer;}
+.uploadArr{ overflow: hidden; clear: both;}
+.uploadArr .input2{ width:504px; height:39px; line-height: 39px; clear: both; float: left;
+background: #fff;}
+.uploadArr .input2 input{ background: none; width: 480px; height: 40px; padding-left: 10px;}
+.uploadArr .loadArr{ float: right; }
+
+.btnload input{ opacity: 0; position: absolute; width: 122px;height: 46px; left:0;top:0; cursor: pointer;}
+a.btnload{ background: #434a54; color:#fff;}
+.uploadList{height: 55px;}
+.uploadList p{ width: 50px; height: 50px; margin: 0 10px; border-radius: 5px; float: left; position: relative;}
+.uploadList img{ width: 50px; height: 50px;}
+.uploadList p span{ position: absolute; right:0px;top:0px; width: 12px;height:12px; background: #fa6e53; border-radius: 50%; cursor: pointer; line-height: 12px; text-align: center; font-weight: bold;}
+
+.videoImg{height: 55px;width:65px; float:left;}
+.videoImg p{ width: 50px; height: 50px; margin: 0 10px; border-radius: 5px; float: left; position: relative;}
+.videoImg img{ width: 50px; height: 50px;}
+.videoImg p span{ position: absolute; right:0px;top:0px; width: 12px;height:12px; background: #fa6e53; border-radius: 50%; cursor: pointer; line-height: 12px; text-align: center; font-weight: bold;}
+
+
+/*闂備椒绱徊楣冩偡閵娾晛鐓濋柨鐕傛嫹*/
+.messageList{margin: 25px 40px; overflow: hidden;}
+.messageList li{background: #fff; margin-bottom: 20px; overflow: hidden;
+box-shadow:0 0 10px #ccc;}
+.messageList li .left{width:120px; background:#666c78; float: left; padding: 10px 0 0 10px; 
+border-radius:2px;padding-bottom: 22px; color: #fff;}
+.messageList li .left>img{border:1px solid #fff;}
+.messageList li .left .messageInfor{ border-left: 1px solid #ccc; padding-left: 10px;}
+.messageList li .left .messageInfor p{ line-height: 20px;}
+.messageList li .left .messageInfor span{ padding-left:5px;}
+.imgmessageTouXiang{ width: 50px;height: 50px;}
+.messageList li .left .name{ color:#fff;}
+.messageList li .left .icon{ height: 25px; line-height: 25px;margin: 5px 0;}
+.messageList li .left .icon b{ float:left;width:32px;height:25px;background: url("https://www.babagame.vip/static/images/icon.jpg") no-repeat;}
+.messageList li .left .icon span{ float: left; text-align: center; color: #000; background: #fff;padding: 0 10px;}
+
+.messageList li .right{ width: 760px;float: left; /* padding-right: 20px; */ position: relative;}
+.messageList li .right .text{color:#444;}
+
+.messageList li .right .top{ height: 40px; line-height: 40px; margin-top: 10px;}
+.messageList li .right .top .ceng{ float: left; height: 18px; padding: 0 10px; background: #ccd0d9; text-align: center; line-height: 18px; color: #fff; margin-left: 20px;border: 1px solid #c4c7cd;}
+.messageList li .right .top .lou{ float: left; height: 18px; padding: 0 10px; background: #fff; text-align: center; line-height: 18px; color: orange;border: 1px solid #c4c7cd;}
+.messageList li .left,.messageList li .right{
+	margin-bottom: -10000px;
+    padding-bottom:10000px;
+}
+.clickZan{ float: right; height: 20px; line-height: 20px;border:1px solid #ccc; cursor:pointer;}
+.clickZan2{border: 1px solid #f6bb43;}
+/* https://www.babagame.vip/static/  */
+.clickZan .zan{width: 20px; height: 20px; float: left; background: url("https://www.babagame.vip/static/images/zan.jpg")}
+.clickZan .nozan{ width: 20px; height: 20px; float: left; background: url("https://www.babagame.vip/static/images/nozan.jpg")}
+.clickZan span{ float: left; padding: 0 10px; text-align: center; background: #fff;}
+.messageList li .right .text{ padding: 0 20px; line-height: 20px; color:#656d78;}
+.bottomImgs{/*  position: absolute;left:2px;right:0;bottom:0; */ border-radius:2px;
+background: url("https://www.babagame.vip/static/images/bgImg.jpg") no-repeat;
+ height: 137px; width:790px; position:relative; margin-top:20px;}
+.bottomImgsWrap{ width: 67px;height: 102px;}
+.bottomImgsWrap .imgs{ position: absolute;
+width: 67px;
+height: 87px; 
+border:1px solid #ccc;
+background:#fff;
+}
+.bottomImgsWrap img{ 
+	position: absolute;  
+	width: 63px;
+	height: 63px; 
+	object-fit:cover;
+	border-bottom:1px solid #ccc;
+	padding:2px;
+}
+
+.bottomImgsWrap .imgs span{
+	position: absolute; height: 23px;
+	line-height: 23px; text-align: center; bottom:0;left:0;right:0;
+	white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+	}
+
+
+/*闂佽楠搁崢婊堝礈濠靛鍋嬮柧蹇ｅ亖娴滄粓鏌ｉ姀鐘冲暈婵℃鎷�*/
+.shenhe{ width: 1000px; margin: 20px auto;}
+.shenheList li{ box-shadow: 0 0 10px #ccc; overflow: hidden; 
+margin-bottom: 20px; position: relative; border-radius:2px;}
+.shenheList li .top{ height: 138px;}
+.shenheList li .top .topImg{ 
+	width: 170px;
+	height: 130px;
+	float: left;
+	overflow:hidden;
+}
+.shenheList li .top .topImg img{ 
+	width: 170px;
+	height: 130px;
+	object-fit:cover;
+	display:block;
+}
+.shenhe .infor{ float: left; margin-left: 18px; height: 138px;}
+.shenhe .infor p{ margin-top: 8px;}
+.shenhe .infor p span{ color:#9e9e9e;font-size: 12px; padding-right: 10px; color:#aab2bd;}
+.shenhe .infor p i{ color:#656d78;font-size: 14px; }
+
+.shenhe .infor p b{color:#8d8d8d; margin-left: 50px; font-weight: normal; font-size: 18px;}
+.shenhe .guize{ margin-top: 15px; padding: 0 30px;}
+.shenhe .guize p{font-size: 17px; margin-bottom: 20px;}
+.shenhe .guize p b{color:#323232;margin-right: 20px; color:#9e9e9e;font-size: 12px;}
+.shenhe .guize p span{color:#838383;color:#656d78;font-size: 14px;}
+.result{ padding: 0 30px; overflow: hidden; height: 65px;}
+.result input{width: 597px; height: 38px; line-height: 38px; padding:0 20px; float: left; border: 1px solid #ccc;}
+.result span{display: block; height: 38px; line-height: 38px; padding:0 20px; float: left; border: 1px solid #ccc;width: 690px;}
+.result a.btn1{cursor:pointer; width: 100px; height: 40px; line-height:40px;  background: #434a54; color: #fff; text-align: center; float: left; font-size: 16px;}
+.result a.btn2{cursor:pointer; width: 100px; height: 40px; line-height:40px;  background: #666c78; color: #fff; text-align: center; float: left; font-size: 16px;}
+.result a.btn3{cursor:pointer; width: 100px; height: 40px; line-height:40px;  background: #ccc; color: #fff; text-align: center; float: left; font-size: 16px;}
+
+.type_icon{ position: absolute;right:0;top:0;color:#fff;}
+.tg{width: 110px;height: 96px; background:url("https://www.babagame.vip/static/images/tg.png") no-repeat;}
+.bh{width: 110px;height: 96px; background:url("https://www.babagame.vip/static/images/bh.png") no-repeat;}
+
+/*闂備胶鍎甸崑鎾诲礉瀹ュ鏄ユ繛鎴欏灩缁�鍡樹繆閵堝懎顏ラ柨鐔告灮閹凤拷*/
+.userList{ width: 1000px; margin: 20px auto; overflow: hidden;}
+.userList li{ height: 70px; margin-bottom: 20px; background: #f6f7fb; padding: 5px; position: relative; cursor: pointer;}
+.userList li .img1{ width: 70px;height: 70px; float: left;}
+.userName{ float: left; padding-left: 10px; margin: 15px 0;}
+.userName b{ font-size: 16px;}
+.userName p{ font-size: 14px; color:#3e403f;margin-top: 3px;}
+.userInfor{ padding-left: 50px; float: left; margin: 15px 0;}
+.userInfor .p1{font-size: 16px;}
+.userInfor .p1 span{ color:#fdba23;margin-left: 20px;}
+.userInfor .p2{font-size: 14px;margin-top: 3px;}
+.userList li .bgc{background: #aab2bd;float: right;position: absolute;right:0;top:0;bottom:0;}
+.userList li .bgc p{ float: left; width: 80px; text-align: center; cursor: pointer; height: 80px;}
+.userList li .bgc p img{margin-top: 25px;}
+.w320{ width: 320px;}
+.w20{ width: 20px;}
+.userList li .bgc p:hover{
+    background: #666c78;
+}
+
+/*婵犵數鍋犵亸顏堫敋瑜庨幈銊╁煛閸愌呭墾婵炴挻鐔幏閿嬬箾绾攱瀚�*/
+.fengmian{ width: 1020px; height: 437px; margin: 40px auto; overflow:hidden; 
+border-radius:10px;}
+
+.ad{width:769px; height:437px;overflow:hidden;position:relative; float: left;}
+.ad .slider{ position:absolute;}
+.ad .slider li{list-style:none;float:left; width: 769px; height: 435px;}
+.ad .slider li a{display: block; height: 100%;}
+.ad .slider li a img{display:block;width: 100%;height: 435px; overflow: hidden;}
+.ad .num{position:absolute; left: 42%; bottom:20px;}
+.ad .num li{float: left;width: 16px;height: 16px;cursor: pointer;background-color: #a7a9c0; border-radius: 50%;margin: 0 5px;}
+.ad .num .on{width: 36px;height: 15px;background-color: #fff; border-radius: 10px;}
+.rightList{ float: left; width: 249px; height: 437px;}
+.rightList img{ display: block; height: 145px; width: 249px;}
+
+.fengmianList{ width: 1020px; overflow: hidden; margin: 50px auto 0;}
+.fengmianList li{float: left; width: 310px; height: 370px; 
+ margin-right: 38px; 
+ margin-bottom: 31px;
+ overflow: hidden; 
+ box-shadow:0 0 10px #ccc; 
+ border-radius:5px;
+ margin-left:4px;
+ margin-top:4px;
+ }
+.fengmianList li a{ 
+	display:block;width: 310px; height: 370px;
+}
+.img_w123{
+	width: 310px; height: 272px;text-align:center;font-size:0;line-height:272px;
+}
+/* .fengmianList li a img{max-width: 310px; max-height: 272px;vertical-align:middle;} */
+.fengmianList li a img{
+	display:block;
+	width:310px;
+	height:272px;
+	object-fit:cover;
+}
+
+.list_infor{ padding: 15px 0 15px 20px;overflow: hidden;}
+.list_infor .left{ float: left; width: 220px;}
+.list_infor .left .p1{font-size: 20px; font-weight: bold;width: 220px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.list_infor .left .p2{font-size: 12px; color:#454f59; margin: 10px 0 5px 0px;}
+.list_infor .left .p3{font-size: 12px; color:#aab2bf;}
+.list_infor .right{ float: left;  text-align: center;}
+.list_infor .right img{ width: 50px;height: 50px;}
+
+/*闂備浇鐨崱鈺佹缂傚倸绋勯幏锟�*/
+.login{ width: 836px;height: 420px; position: absolute; left: 50%;top:50%; margin-left: -418px; margin-top: -210px;  box-shadow: 0 0 20px #ccc;}
+.loginPadding{ padding: 20px;}
+.loginPadding .top{height: 48px;}
+.loginPadding .top p{ float: left;}
+.loginPadding .top p b{float: left;width: 10px;height: 46px; background: #777; border-radius: 5px;}
+.loginPadding .top .gologin{font-size:35px; float: left; padding-left: 10px; font-weight: bold;}
+.loginPadding .top .gozhuce{ float: right; font-size: 20px;font-weight: bold;}
+
+.login_infor{ width: 403px;height: 326px; margin: 30px auto;}
+.login_infor .p1{ height: 36px;border-bottom: 1px solid #ccc;}
+.login_infor .p1 span{float: left; width: 31px; height: 36px; background: url("https://www.babagame.vip/static/images/tel.jpg") no-repeat center center; background-size: 20px 28px;}
+.login_infor .p1 input{float: left; width: 366px; height: 30px; font-size: 18px; color:#787878; margin-top: 4px;}
+.login_infor .p2{ height: 35px;line-height: 35px; border-bottom: 1px solid #ccc; margin-top: 30px;}
+.login_infor .p2 span{float: left; width: 31px; height: 36px; background: url("https://www.babagame.vip/static/images/suo.jpg") no-repeat center center; background-size: 23px 27px;}
+.login_infor .p2 input{float: left; width: 326px; height: 30px; font-size: 18px; color:#787878; margin-top: 4px;}
+.yan1{float: left; width: 36px; height: 32px; background: url("https://www.babagame.vip/static/images/loginyan1.jpg")}
+.yan2{float: left; width: 36px; height: 32px; background: url("https://www.babagame.vip/static/images/loginyan2.jpg")}
+.login_infor .p3{height: 40px; line-height: 40px;}
+.login_infor .p3 a{ float: right; color:#ffba24; font-size: 16px;}
+.login_infor .p4{width: 283px; height: 57px; line-height: 57px; background:#434a54; color:#fff; margin: 15px auto; text-align: center; font-size: 20px; cursor: pointer;}
+.login_infor .p5{ width: 296px; height: 19px; background: url("https://www.babagame.vip/static/images/shejiao.jpg") no-repeat; margin: 5px auto;}
+.login_infor .p6 { text-align: center; margin-top:20px;}
+.login_infor .p6 a{ margin: 0 10px;}
+
+/*婵犵數鍋涢ˇ顓㈠礉瀹�鍕埞闁跨噦鎷�*/
+.zhuce{width: 820px;height: 500px;margin-left: -410px; margin-top: -200px; left:50%;top:50%;}
+.zhuce .loginPadding .top p{ float: right;}
+.zhuce .loginPadding .top p b{float: left;width: 10px;height: 46px; background: #777; border-radius: 5px; margin-left: 10px;}
+.zhuce .loginPadding .top .gozhuce{font-size:35px; float: left; padding-left: 10px; font-weight: bold;}
+.zhuce .loginPadding .top .gologin{ float: left; font-size: 20px;font-weight: bold;}
+
+.zhuce .login_infor .p7{height: 35px;line-height: 35px; border-bottom: 1px solid #ccc; margin-top: 30px;}
+.zhuce .login_infor .p7 span{float: left; width: 31px; height: 36px;background: url("https://www.babagame.vip/static/images/tou.jpg") no-repeat left center;  }
+.zhuce .login_infor .p7 input{float: left; width: 326px; height: 30px; font-size: 18px; color:#787878; margin-top: 4px;}
+.zhuce .login_infor .p2 input{width: 290px;}
+.zhuce .login_infor .p2 .ma{ width: 60px;height: 30px; text-align: center; line-height: 30px; color: #fff; float: right;background:#434a54;}
+.zhuce .login_infor .p8 span{width: 31px; height: 36px; background: url("https://www.babagame.vip/static/images/yaoshi.jpg") no-repeat center center; background-size: 24px 29px;}
+.getYan_zhuce{width: 120px;height: 30px; background:#434a54;color:#fff; display:block; text-align:center;line-height:30px; border-radius:5px;padding: 0;margon:0; border:none; cursor: pointer;}
+
+/*闂傚倸鍊搁崯浼村窗瀹ュ洦顫曢柣鎰惈缁�鍡涙煕閳╁啰鈽夐悽顖ゆ嫹*/
+.shenhe2{ width: 1000px; margin: 20px auto;}
+.shenheList2 li{ overflow: hidden; margin-bottom: 20px; position: relative;}
+.shenheList2 li .top{ height: 138px;}
+.shenheList2 li .top img{ width: 170px;height: 130px;float: left;}
+.shenhe2 .infor{ float: left; margin-left: 18px; height: 138px;}
+.shenhe2 .infor p{ margin-top: 8px;}
+.shenhe2 .infor p span{ color:#9e9e9e;font-size: 17px; padding-right: 10px;}
+.shenhe2 .infor p i{ color:#323232;font-size: 18px; }
+.shenhe2 .infor p b{color:#8d8d8d; margin-left: 50px; font-weight: normal; font-size: 18px;}
+.shenhe2 .guize{ margin-top: 15px; padding: 0 30px;}
+.shenhe2 .guize p{font-size: 17px; margin-bottom: 20px;}
+.shenhe2 .guize p b{color:#323232;margin-right: 20px;}
+.shenhe2 .guize p span{color:#838383;}
+
+.fenzuSelect{overflow: hidden; width: 1000px; margin: 20px auto;}
+
+.team{/* float: left; */ /* width: 664px; */overflow:hidden; }
+.team b{ width: 55px; height: 26px; margin-top:15px;
+line-height: 26px; background: #f6bb43; color:#fff; float: left; text-align: center;}
+.teamList{ 
+	/* width: 760px;  */
+	overflow: hidden;
+	 border: 1px solid #e5e5e5;
+	margin-left: 12px; 
+	float: left;
+	overflow:hidden;
+	}
+
+.teamList a{
+	padding: 0 12px 0 0; 
+	height: 40px; 
+	line-height: 40px; 
+	float: left; 
+	margin: 8px 2px;
+	border:1px solid #aab2bd;
+}
+.teamList a img{ width: 42px; height: 42px; margin-right: 10px; float: left;}
+.teamList a i{
+	float: left;
+	line-height:20px;
+}
+.teamList a i span{
+	display:block;
+}
+.group{ float: right; height: 48px; line-height: 48px;}
+.group .a1{ float: left; width: 120px;height: 48px; color:#22517b; font-size: 18px; text-align: center;}
+.group .a2{ float: left; width: 120px;height: 48px; color:#fff; background: #434955; font-size: 18px; text-align: center;}
+
+.fenzuList{padding: 0 18px; overflow: hidden; width: 1000px; margin: 20px auto;}
+.fenzuList a{padding: 0 12px 0 0; height: 40px; line-height:40px; float: left;
+ margin: 5px 10px;border:1px solid #aab2bd;}
+
+.fenzuList a img{ width: 42px; height: 42px; margin-right: 10px; float: left; /* margin-top: 10px; */}
+.fenzuList a i{
+	float: left;
+	line-height:20px;
+}
+.fenzuList a i span{
+	display:block;
+}
+.fenzuList .selected{ /* background: #c5c5c5; */ border:1px solid #434a54;}
+
+.teamList .selected{ /* background: #c5c5c5; */ border:1px solid #434a54;}
+
+
+/*濠电偞鍨堕幐鎼佹晝閿濆洦顫曢柨鐕傛嫹*/
+.upload_zhang{ width: 1000px; margin: 40px auto; overflow: hidden;}
+.upload_zhang .top{height: 240px;}
+.upload_img{ 
+	width: 230px;
+	height:230px; 
+	background: url("https://www.babagame.vip/static/images/upload.jpg"); 
+	float:left;
+}
+.upload_img input{width: 231px; height: 230px; opacity: 0; position: absolute;}
+.upload_img img{
+	width: 230px;
+	height:230px; 
+	display:block;
+	object-fit:cover;
+}
+
+.upload_form{ margin-left: 40px; float: left; width: 640px;}
+.upload_form .p1{ height: 30px;line-height: 30px; border-bottom: 3px solid #f7f5f6; font-size: 20px;
+ text-indent: 1em;margin-bottom: 27px;}
+ .upload_form .p1 span{
+ color:#aab2bd;font-size:12px;
+ }
+ .upload_form .p1 input{
+  color:#656d78;font-size:14px;
+ }
+.upload_form .div{ float: left; }
+.upload_form .div1{ color:#aab2bd;font-size:12px;}
+.upload_form .div2{ margin: 5px 20px 0 24px;}
+.upload_form .div2 p{ margin-bottom: 10px; overflow: hidden;}
+.upload_form .div2 p b{ margin-left: 10px; float: left;color:#aab2bd;font-size:12px;}
+.radio1{float: left; width: 20px;height: 20px; background: url("https://www.babagame.vip/static/images/radio1.jpg")}
+.radio2{float: left; width: 20px;height: 20px; background: url("https://www.babagame.vip/static/images/radio2.jpg")}
+.select{ position: relative;}
+.xuanze{ width: 60px; border: 1px solid #ccc; height: 21px; padding: 0 10px; line-height: 21px; cursor: pointer;}
+.xuanze span{ float: left;color:#656d78;font-size:14px;}
+.xuanze i{ float:left; width: 12px; height: 10px; background: url("https://www.babagame.vip/static/images/xiala.jpg") no-repeat right center; position: absolute; right:10px; top:5px;}
+.moshiList{ position: absolute; top:21px;left:0;right:0; border:1px solid #ccc; border-top: 0; display: none;}
+.moshiList li{ height: 21px; line-height: 21px; padding-left: 10px; cursor: pointer;
+color:#656d78;font-size:14px;}
+.moshiList li:hover{ background:#ffbb24;color:#fff;}
+
+.upload_zhang .guize{ margin-top: 15px; padding: 0 30px;}
+.upload_zhang .guize>div{font-size: 17px; margin-bottom: 20px;}
+.upload_zhang .guize>div b{color:#323232;margin-right: 20px; float:left;
+color:#aab2bd;font-size:12px;margin-top:2px;
+}
+.upload_zhang .guize>div span{color:#aab2bd;font-size:12px;}
+
+.zhichi{ overflow: hidden;}
+.zhichi b{float: left;}
+.zhichi a{ float: left;}
+.zhichi a span{margin-top: 3px;}
+.zhichi a b{ float: left; margin-left: 10px; font-weight: normal;}
+.hasBottom{ height: 50px; line-height: 50px;box-shadow: 0 5px 5px #f3f1f2;}
+.inRight{ float: right; margin-top: 20px;}
+.inRight .btn1{ margin-right: 20px;}
+.zanzhu{  height: 104px; background: #f7ebd3; padding:5px;  }
+.tiaokuan{ width: 420px;height: 75px; margin: 0 auto;}
+.tiaokuan img{ float: left;}
+.tiaokuan p{ float: left; width: 280px; font-size: 16px; text-align: center; margin-top: 20px;}
+.tiaokuan p a{ color:#00A1CB}
+
+/*濠电偞鍨堕幖鈺傜濞嗗警褎寰勭�ｎ兘鏋栧銈嗘尵閸嬬喐淇婇敓锟�*/
+.tabs_center{height:30px; line-height: 30px; width: 1000px; margin: 20px auto 0;}
+.tabs_center a{height:30px; font-size: 20px;color:#3d3d3d; float: left; cursor: pointer;margin-right:30px; padding: 0 10px;}
+.tabs_center a img{ width: 28px;height: 28px; float: left;margin-right:10px;}
+.tabs_center .activeStyle{border-bottom:4px solid #ffbb24;}
+.type1{width: 76px;height: 63px; background:url("https://www.babagame.vip/static/images/type1.png") no-repeat; right:-5px;}
+.type1 p{ transform:translate(30px,30px) rotate(45deg);}
+.type2{width: 76px;height: 63px; background:url("https://www.babagame.vip/static/images/type2.png") no-repeat; right:-5px;}
+.type3{width: 76px;height: 63px; background:url("https://www.babagame.vip/static/images/type3.png") no-repeat; right:-5px;}
+
+
+/*闂佽楠搁崢婊堝礈濠靛鍋嬮柟鎯板Г閸嬫劙鏌ら崫銉殰闁圭兘鏀遍幏鍛村捶椤撶儐妫婇柣搴㈩問閸ｎ垶骞忛敓锟�*/
+.checkStatus{ margin: 20px; padding:0 10px;}
+.checkStatus p{ height: 40px; line-height: 40px; font-size: 16px; background: #e5e5e5; text-indent: 2em;
+border: 1px solid #ccc; border-radius: 5px;}
+.checkStatus .p2 span{color:#00A1CB;}
+.checkStatus .p3 span{color:red;}
+.checkStatus .p3 input{ background: none; height: 40px;line-height: 40px; width: 853px;}
+.anniu{ position: absolute; width: 85px;height: 30px; line-height: 30px; text-align: center; right:20px;top:20px;color:#fff; background: #0a0a0a; border-radius: 5px;}
+.anniu a{ display: block;color:#fff;}
+.anniu_yu{position: absolute; right:30px; top:60px; color:red;}
+
+.sendBtn{ width: 85px;height: 30px; line-height: 30px; text-align: center; color:#fff; background: #0a0a0a; border-radius: 5px; float: right; margin: 0 10px; cursor: pointer;}
+. tabs_center .sendBtn a{ display: block;width: 85px;height: 30px; line-height: 30px; text-align: center; color:#fff; background: #0a0a0a; border-radius: 5px; float: right;}
+
+.append {
+	margin-top:20px;
+}
+.append p{
+	margin-bottom:5px!important;
+	font-size:12px;
+}
+.append p *{
+	font-size:12px!important;
+}
+
+

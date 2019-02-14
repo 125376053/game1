@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <link rel="icon" href="images/favicon.ico">
+    <script src="js/limit.js"></script>
+    <link rel="stylesheet" href="css/all.css">
+    <style>
+        .wrap {
+            overflow: hidden;
+            margin: 0 30px;
+        }
+
+        .name { /* width:760px; */
+        }
+
+        .div {
+            float: left;
+        }
+
+        .div p {
+            width: 50px;
+            float: left;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+<div class="pulice" v-cloak>
+    <div class="header">
+        <div class="headerCenter">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png">
+                </a>
+            </div>
+            <div class="nav_right">
+                <div class="nav" v-if="!userInfor || (userInfor && userInfor.role==0)">
+                    <a href="index.html" class="activeStyle">
+                        <span>活动</span>
+                    </a>
+                    <a href="jinxing.html">
+                        <span>进行中</span>
+                    </a>
+                    <a href="lishi.html">
+                        <span>历史</span>
+                    </a>
+                    <a :href="api+'/static/good/list.html'">
+                        <span>游戏商城</span>
+                    </a>
+                    <a href="upload.html">
+                        <span>发起活动</span>
+                    </a>
+                    <a target="_blank" href="http://jy.babagame.vip/">
+                        <span>[奖励与规则]</span>
+                    </a>
+                </div>
+                <div class="nav" v-if="userInfor && userInfor.role==1">
+                    <a href="check.html" class="activeStyle">
+                        <img src="images/1.png" alt="">
+                        <span>活动审核</span>
+                    </a>
+                    <a href="userlist.html">
+                        <img src="images/2.png" alt="">
+                        <span>用户管理</span>
+                    </a>
+                </div>
+                <div class="fixedRight">
+                    <a href="login.html" v-if="!userInfor">
+                        <img class="img1" src="images/rentou.png" alt="">
+                        <span>登录</span>
+                    </a>
+                    <a href="center.html" v-else>
+                        <p>
+                            <span>{{userInfor.nickName}}</span>
+                            <i @click.stop.prevent="logOut">[退出]</i>
+                        </p>
+                        <img class="img2" :src="userInfor.avatar||'images/renxing.png'" alt="">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="team" v-cloak>
+        <div class="shenhe2">
+            <ul class="shenheList2">
+                <li>
+                    <div v-if="actStatus!=7 && infor.length>0" class="sendBtn" style="cursor: pointer;" @click="sheng">
+                        判定输赢
+                    </div>
+                    <div v-if="actStatus!=7 && infor.length>0" class="sendBtn" style="cursor: pointer;"
+                         @click="wancheng">结束活动
+                    </div>
+                    <div v-if="actStatus!=7 && infor.length>0" class="sendBtn" style="cursor: pointer;" @click=setNoOk>
+                        上报鸽子玩家
+                    </div>
+
+                    <div class="top">
+                        <img :src="pageObj.avatar" alt="">
+                        <div class="infor">
+                            <p>
+                                <span>活动名称:</span>
+                                <i>{{pageObj.actName}}</i>
+                            </p>
+                            <p>
+                                <span>游戏:</span>
+                                <i>{{pageObj.actGameName}}</i>
+                            </p>
+                            <p>
+                                <span>模式:</span>
+                                <i>{{pageObj.actGameModel}}</i>
+                            </p>
+                            <p>
+                                <span>活动时间:</span>
+                                <i>{{pageObj.actTime}}</i>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="guize">
+                        <p>
+                            <b>活动规则</b>
+                            <!-- <span>{{pageObj.actRule}}</span> -->
+                            <span class="append" v-html="pageObj.actRule"></span>
+                        </p>
+                        <p>
+                            <b>请求赞助</b>
+                            <span>{{pageObj.sponsor}}</span>
+                        </p>
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <h1 v-if="guanjun" class="guanjun">冠军:{{guanjun}}</h1>
+
+        <!--鸽子玩家列表-->
+        <div class="team" style="width:700px;margin:0 auto;float:none;" v-if="escapeUsersList.length>0">
+            <b>鸽子名单</b>
+            <div class="teamList" style="width:600px;float:left;">
+                <a href="javascript:;" v-for="(item,index) in escapeUsersList">
+                    <img :src="item.src" alt="">
+                    <i>
+                        <span>{{item.qq}}</span>
+                        <span>{{item.nickName}}</span>
+                    </i>
+                </a>
+            </div>
+        </div>
+
+        <div class="fenzuSelect">
+            <!--提示-->
+            <div class="checkStatus">
+                <p class="p1">为对局判定获胜队伍</p>
+            </div>
+        </div>
+
+        <div class="wrap">
+            <div class="div name">
+                <div
+                        class="team"
+                        v-for="(item,index) in infor"
+                        v-if="infor.length>0"
+                        :style="{height:50*2+'px'}"
+                >
+                    <b>{{item.groupName}}</b>
+                    <!--  -->
+                    <div class="teamList"
+                         @click="clickWho(item,index)"
+                         :style="{background:styleBg(item)}"
+                    >
+                        <a
+                                href="javascript:;"
+                                v-for="(item1,index1) in item.users"
+                                @click.stop="addTeamRen(item1,index1)"
+                                :class="{selected:item1.selected}"
+                        >
+                            <img :src="item1.avatar" alt="">
+                            <i>
+                                <span>{{item1.qq}}</span>
+                                <span>{{item1.nickName}}</span>
+                            </i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="div lun1" style="width: 100px;" v-if="list1">
+                <div v-for="(item,index) in list1">
+                    <p
+                            :style="{height:height(1)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_1'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:1
+                    }"
+                    >
+
+                    </p>
+                    <p
+                            :style="{height:height(1)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_2'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:2
+                    }"
+                    >
+
+                    </p>
+                    <p
+                            :style="{height:height(1)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_3'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:3
+                    }"
+                    >
+
+                    </p>
+                    <p
+                            :style="{height:height(1)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_4'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:4
+                    }"
+                    >
+
+                    </p>
+                </div>
+            </div>
+            <div class="div lun2" style="width: 100px;" v-if="list2">
+                <div v-for="(item,index) in list2">
+                    <p
+                            :style="{height:height(2)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_1'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:1
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(2)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_2'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:2
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(2)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_3'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:3
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(2)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_4'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:4
+                    }"
+                    >
+                    </p>
+                </div>
+            </div>
+            <div class="div lun3" style="width: 100px;" v-if="list3">
+                <div v-for="(item,index) in list3">
+                    <p
+                            :style="{height:height(3)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_1'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:1
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(3)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_2'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:2
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(3)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_3'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:3
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(3)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_4'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:4
+                    }"
+                    >
+                    </p>
+                </div>
+            </div>
+            <div class="div lun4" style="width: 100px;" v-if="list4">
+                <div v-for="(item,index) in list4">
+                    <p
+                            :style="{height:height(4)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_1'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:1
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(4)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_2'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:2
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(4)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_3'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:3
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(4)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_4'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:4
+                    }"
+                    >
+                    </p>
+                </div>
+            </div>
+            <div class="div lun5" style="width: 100px;" v-if="list5">
+                <div v-for="(item,index) in list5">
+                    <p
+                            :style="{height:height(5)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_1'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:1
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(5)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_2'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:2
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(5)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_3'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:3
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(5)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_4'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:4
+                    }"
+                    >
+                    </p>
+                </div>
+            </div>
+            <div class="div lun6" style="width: 100px;" v-if="list6">
+                <div v-for="(item,index) in list6">
+                    <p
+                            :style="{height:height(6)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_1'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:1
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(6)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_2'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:2
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(6)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_3'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:3
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(6)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_4'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:4
+                    }"
+                    >
+                    </p>
+                </div>
+            </div>
+            <div class="div lun7" style="width: 100px;" v-if="list7">
+                <div v-for="(item,index) in list7">
+                    <p
+                            :style="{height:height(7)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_1'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:1
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(7)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_2'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:2
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(7)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_3'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:3
+                    }"
+                    >
+                    </p>
+                    <p
+                            :style="{height:height(7)+'px'}"
+                            :class="item.index+'_'+item.groupId+'_'+item.status+'_4'"
+                            v-line="{
+                        index:item.index,
+                        groupId:item.groupId,
+                        status:item.status,
+                        mIndex:4
+                    }"
+                    >
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
+<script src="js/jquery-1.10.1.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/vue.js"></script>
+<script>
+    new Vue({
+        el: '.pulice',
+        data: {
+            api: api,
+            userInfor: userInfor,
+            actId: getSearchString('id') || 0,
+            pageObj: {},
+            actStatus: '',
+            gid: '',
+            ogid: '',
+            group: [], //对决组
+            winnerId: '',
+            loserId: '',
+            guanjun: '',
+            uidList: [], //添加分组选中的人员id集合
+            addTeamRenNum: [], //添加的分组人员
+            escapeUsersList: [], //鸽子玩家人员列表
+            infor: [],
+            list1: [],
+            list2: [],
+            list3: [],
+            list4: [],
+            list5: [],
+            list6: [],
+            list7: []
+        },
+        computed: {
+            lunNum(){
+                var lun = 2 * (Object.keys(this.obj.data).length - 1)
+                return lun
+            },
+            zuNum(){
+                var zu = 2 * (this.obj.data.uglist.length)
+                return zu
+            },
+            height(lun){
+                return function (lun) {
+                    return Math.pow(2, (lun - 1)) * 50;
+                }
+            },
+            styleBg(item){
+                return function (item) {
+                    console.log(item)
+                    if (item.flag) {
+                        return 'red'
+                    }
+                    if (item.status == 3) {
+                        return '#eee'
+                    }
+                    /* if(item.status==2){
+                     return 'green'
+                     } */
+                }
+            }
+        },
+        directives: {
+            line(el, binding){
+                var lineParams = {
+                    index: binding.value.index,
+                    groupId: binding.value.groupId,
+                    status: binding.value.status, // 失败-灰色 胜利-红色加长 战斗中-红色
+                    mIndex: binding.value.mIndex
+                }
+
+                //奇数行
+                if (lineParams.index % 2 == 1) {
+                    if (lineParams.status == 1) {
+                        if (lineParams.mIndex == 3) {
+                            el.style.borderTop = '1px solid green'
+                            el.style.borderRight = '1px solid green'
+                        }
+                    }
+                    if (lineParams.status == 2) {
+                        if (lineParams.mIndex == 3) {
+                            el.style.borderTop = '1px solid red'
+                            el.style.borderRight = '1px solid red'
+                        }
+                        if (lineParams.mIndex == 4) {
+                            el.style.borderBottom = '1px solid red'
+                        }
+                    }
+                    if (lineParams.status == 3) {
+                        if (lineParams.mIndex == 3) {
+                            el.style.borderTop = '1px solid yellow'
+                            el.style.borderRight = '1px solid yellow'
+                        }
+                    }
+                }
+
+                //偶数行
+                if (lineParams.index % 2 == 0) {
+                    if (lineParams.status == 1) {
+                        if (lineParams.mIndex == 1) {
+                            el.style.borderBottom = '1px solid green'
+                            el.style.borderRight = '1px solid green'
+                        }
+
+                    }
+                    if (lineParams.status == 2) {
+                        if (lineParams.mIndex == 1) {
+                            el.style.borderBottom = '1px solid red'
+                            el.style.borderRight = '1px solid red'
+                        }
+                        if (lineParams.mIndex == 2) {
+                            el.style.borderTop = '1px solid red'
+                        }
+                    }
+                    if (lineParams.status == 3) {
+                        if (lineParams.mIndex == 1) {
+                            el.style.borderBottom = '1px solid yellow'
+                            el.style.borderRight = '1px solid yellow'
+                        }
+
+                    }
+                }
+            }
+        },
+        methods: {
+            logOut(){
+                $.ajax({
+                    url: api + '/baba/act/logout',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        window.sessionStorage.removeItem('userInfor')
+                        window.location.reload()
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            getData(){
+                var that = this;
+                $.ajax({
+                    url: api + '/baba/act/getGamingActDetail2',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: {
+                        actId: that.actId
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if (res.code == 'LPB0001') {
+                            that.pageObj = res.data
+                            that.actStatus = res.data.actStatus
+                            that.infor = res.data.uglist
+                            that.list1 = res.data.list1 || []
+                            that.list2 = res.data.list2 || []
+                            that.list3 = res.data.list3 || []
+                            that.list4 = res.data.list4 || []
+                            that.list5 = res.data.list5 || []
+                            that.list6 = res.data.list6 || []
+                            that.list7 = res.data.list7 || []
+                            that.escapeUsersList = res.data.escapeUsersList //鸽子玩家
+                            that.guanjun = res.data.winner.groupName || ''
+                        } else if (res.code == 'LPB0002') {
+                            $.Prompt(res.message);
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+//-------------------------------------------------------------------------------           
+            clickWho(item, index){
+                if (item.status == 1) {
+                    this.shengFn(item, index)
+                }
+            },
+//-------------------------------------------------
+            // 判断当前组获胜
+            shengFn(item1, index1){
+                var that = this
+                console.log(this.infor)
+                this.infor.forEach(function (item, index) {
+                    that.$set(item, 'flag', false)
+                })
+                if (!item1.flag) {
+                    that.$set(item1, 'flag', true)
+                } else {
+                    that.$set(item1, 'flag', false)
+                }
+
+                that.winnerId = item1.groupId,
+                    that.loserId = item1.relatedId
+            },
+            // 判断输赢
+            sheng(){
+                var that = this;
+                if (that.loserId == 0) {
+                    jalert('该组没有确定对手，不能判定输赢')
+                    return false
+                }
+                /* if(that.actStatus==7){
+                 jalert('活动已经结束')
+                 return false
+                 } */
+                $.ajax({
+                    url: api + '/baba/act/determineWinner',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: {
+                        winnerId: that.winnerId,
+                        loserId: that.loserId
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if (res.code == 'LPB0001') {
+                            that.group = []
+                            that.getData()
+                        } else if (res.code == 'LPB0002') {
+                            $.Prompt(res.message);
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            // 完成
+            wancheng(){
+                /* if(this.actStatus==7){
+                 jalert('活动已经结束')
+                 return false
+                 } */
+                var flag = window.confirm('你确定要结束游戏吗?')
+                if (flag) {
+                    var that = this;
+                    $.ajax({
+                        url: api + '/baba/act/setActGameOver',
+                        type: 'get',
+                        beforeSend: function () {
+                            loading.show()
+                        },
+                        data: {
+                            actId: that.actId
+                        },
+                        success: function (res) {
+                            loading.hide()
+                            console.log(res)
+                            if (res.code == 'LPB0001') {
+                                $.Prompt('游戏结束')
+                                that.getData()
+                            } else if (res.code == 'LPB0002') {
+                                $.Prompt(res.message);
+                            }
+                        },
+                        error: function () {
+                            loading.hide()
+                        }
+                    })
+                }
+            },
+            // 设置鸽子玩家----------------------
+            addTeamRen(item, index){
+                // 不能一边设置状态 一边添加到数组 必须分开写
+                if (!item.selected) {
+                    this.$set(item, 'selected', true)
+                } else {
+                    this.$set(item, 'selected', false)
+                }
+                if (item.selected) {
+                    this.addTeamRenNum.push(item)
+                } else {
+                    this.addTeamRenNum.splice(index, 1)
+                }
+            },
+            // 上报鸽子玩家
+            setNoOk(){
+                if (this.addTeamRenNum.length <= 0) {
+                    jalert('请选择人员进行上报')
+                    return false
+                }
+                this.addTeamRenNum.forEach((item, index) => {
+                    this.uidList.push(item.uid)
+                })
+                /*                 if(this.uidList.length==0){
+                 jalert('')
+                 return false
+                 }else{
+
+                 } */
+                this.setNoOkFn()
+            },
+            //鸽子玩家接口
+            setNoOkFn(){
+                var that = this;
+                var obj = {
+                    actId: that.actId,
+                    users: that.uidList
+                }
+                $.ajax({
+                    url: api + '/baba/act/setUserescape',
+                    type: 'post',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: JSON.stringify(obj),
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if (res.code == 'LPB0001') {
+                            that.uidList = []
+                            that.addTeamRenNum = []
+                            that.getData()
+                        } else if (res.code == 'LPB0002') {
+                            $.Prompt(res.message);
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+        },
+        mounted(){
+            this.getData()
+        }
+    })
+</script>

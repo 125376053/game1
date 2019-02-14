@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <link rel="icon" href="images/favicon.ico">
+    <script src="js/limit.js"></script>
+    <link rel="stylesheet" href="css/all.css">
+    <link rel="stylesheet" href="css/polyfill.object-fit.min.css">
+</head>
+<body>
+<div class="pulice">
+    <div class="header">
+        <div class="headerCenter">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png">
+                </a>
+            </div>
+            <div class="nav_right">
+                <div class="nav" v-if="!userInfor || (userInfor && userInfor.role==0)">
+                    <a href="index.html" class="activeStyle">
+                        <span>活动</span>
+                    </a>
+                    <a href="jinxing.html">
+                        <span>进行中</span>
+                    </a>
+                    <a href="lishi.html">
+                        <span>历史</span>
+                    </a>
+                    <a :href="api+'/static/good/list.html'">
+                        <span>游戏商城</span>
+                    </a>
+                    <a href="upload.html">
+                        <span>发起活动</span>
+                    </a>
+                    <a target="_blank" href="http://jy.babagame.vip/">
+                        <span>[奖励与规则]</span>
+                    </a>
+                </div>
+                <div class="nav" v-if="userInfor && userInfor.role==1">
+                    <a href="check.html">
+                        <img src="images/1.png" alt="">
+                        <span>活动审核</span>
+                    </a>
+                    <a href="userlist.html" class="activeStyle">
+                        <img src="images/2.png" alt="">
+                        <span>用户管理</span>
+                    </a>
+                </div>
+                <div class="fixedRight">
+                    <a href="login.html" v-if="!userInfor">
+                        <img class="img1" src="images/rentou.png" alt="">
+                        <span>登录</span>
+                    </a>
+                    <a href="center.html" v-else>
+                        <p>
+                            <span>{{userInfor.nickName}}</span>
+                            <i @click.stop.prevent="logOut">[退出]</i>
+                        </p>
+                        <img class="img2" :src="userInfor.avatar||'images/renxing.png'" alt="">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--用户列表页面-->
+    <div class="userList" v-cloak>
+        <ul>
+            <li v-for="(item,index) in userList" @mouseover="userAuth(item,index)">
+                <img class="img1" :src="item.avatar" alt="">
+                <div class="userName">
+                    <b>{{item.nickName}}</b>
+                    <p>{{item.account}}</p>
+                </div>
+                <div class="userInfor">
+                    <p class="p1">身份:<span>{{item.position}}</span></p>
+                    <p class="p2">肥宅诚信值:<span>{{item.faithCount}}</span></p>
+                </div>
+                <div class="bgc" :class="{
+                w320:curIndex===index,
+                w20:curIndex!==index
+            }">
+                    <p>
+                        <img @click="orderAuth(item,1)"
+                             width="21"
+                             height="28"
+                             :src="item.opsitionType==2?'images/suerList1.png':'images/suerList11.png'" alt=""
+                        >
+                    </p>
+                    <p>
+                        <img @click="limit(item,2)"
+                             width="30"
+                             height="30"
+                             :src="item.canEnro==1?'images/suerList2.png':'images/suerList22.png'" alt=""
+                        >
+                    </p>
+
+                    <p>
+                        <img @click="noMessage(item,4)"
+                             width="30"
+                             height="30"
+                             :src="item.canSpeak==1?'images/suerList3.png':'images/suerList33.png'" alt=""
+                        >
+                    </p>
+                    <p>
+                        <img @click="remove(item,3)"
+                             width="28"
+                             height="31"
+                             src="images/suerList4.png" alt=""
+                        >
+                    </p>
+                </div>
+            </li>
+        </ul>
+        <div v-if="userList.length==0" style=" text-align: center; line-height: 500px; font-size: 20px;">暂无数据</div>
+    </div>
+</div>
+
+</body>
+</html>
+<script src="js/jquery-1.10.1.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/vue.js"></script>
+<script src="js/polyfill.object-fit.min.js"></script>
+<script>
+    var userList = new Vue({
+        el:'.pulice',
+        data:{
+            userInfor:userInfor,
+            api:api,
+            userList:[],
+            curIndex:0,
+            type:1,
+            userId:'',
+            optype:''
+        },
+        methods:{
+            logOut(){
+                $.ajax({
+                    url:api+'/baba/act/logout',
+                    type:'get',
+                    beforeSend:function(){
+                        loading.show()
+                    },
+                    success:function(res){
+                        loading.hide()
+                        window.sessionStorage.removeItem('userInfor')
+                        window.location.reload()
+                    },
+                    error:function(){
+                        loading.hide()
+                    }
+                })
+            },
+            getData(){
+                var that = this;
+                $.ajax({
+                    url: api + '/baba/act/getUsersList',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: {
+                        actId: 0
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if(res.code == 'LPB0001'){
+                        	that.userList = res.data
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            // 权限
+            setAuth(){
+                var that = this;
+                $.ajax({
+                    url: api + '/baba/act/operateUserById',
+                    type: 'get',
+                    beforeSend: function () {
+                        loading.show()
+                    },
+                    data: {
+                        userId: that.userId,
+                        type:that.type,
+                        opType:that.optype
+                    },
+                    success: function (res) {
+                        loading.hide()
+                        console.log(res)
+                        if(res.code == 'LPB0001'){
+                        	that.getData()
+                        }
+                    },
+                    error: function () {
+                        loading.hide()
+                    }
+                })
+            },
+            userAuth(item,index){
+                this.curIndex = index
+            },
+
+            orderAuth(item,index){
+            	if(item.opsitionType==2){
+            		item.opsitionType=1
+            	}else{
+            		item.opsitionType=2
+            	}
+                this.type = index
+                this.userId=item.uid
+                this.optype=item.opsitionType
+                this.setAuth()
+              
+            },
+            limit(item,index){
+            	if(item.canSpeak==1){
+            		item.canSpeak=0
+            	}else{
+            		item.canSpeak=1
+            	}
+                this.type = index
+                this.optype=item.canSpeak
+                this.userId=item.uid
+                this.setAuth()
+            },
+            noMessage(item,index){
+            	if(item.canEnro==1){
+            		item.canEnro=0
+            	}else{
+            		item.canEnro=1
+            	}
+                this.type = index
+                this.optype=item.canEnro
+                this.userId=item.uid
+                this.setAuth()
+            },
+            remove(item,index){
+                this.type = index
+                this.userId=item.uid
+                this.setAuth()
+            }
+        },
+        mounted(){
+            this.getData()
+            objectFit.polyfill({
+                selector: 'img',
+                fittype: 'cover'
+            });
+        }
+    })
+</script>
